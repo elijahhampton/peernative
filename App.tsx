@@ -178,37 +178,50 @@ function App(): JSX.Element {
 
   const handleOnSubmit = (e: GestureResponderEvent) => {
     //add user response
-    const newUserResponse: UserResponse = {
+    const userResponse: UserResponse = {
       role: 'user',
       response: textInputVal,
     };
-    setConversation(prevState => [...prevState, newUserResponse]);
 
-    //make api request
-    axios('http://localhost:3001/reply', {
-      method: 'POST',
-      data: textInputVal,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((response: AxiosResponse<PeerResponse>) => {
-        console.log('New ChatGPT Response: ');
-        console.log(response.data);
+    const axiosResponse = await axios(`http://localhost:3001/reply`, {
+      ...commonAxiosConfig,
+      data: JSON.stringify({
+        userResponse,
+        pastConversation: conversationCache,
+      }),
+    });
 
-        if (response.data?.error) {
-          throw new Error(response.data?.error);
-        }
+    const replyResponse = axiosResponse.data.replyResponse;
+    const responseContent = String(replyResponse.content).replace('.', '');
+    const parsedResponseContent = JSON.parse(responseContent);
+    const responseRole = replyResponse.role;
 
-        setConversation(prevState => [...prevState, response.data]);
-      })
-      .catch((error: AxiosError) => {
-        console.log('Error with reply');
-        console.log(error.message);
-      });
+    const updatedConversationCache = JSON.parse(
+      JSON.stringify(conversationCache),
+    );
 
-    //parse gpt output
-    //add to results { role: "peer", response: "", suggestion: "" } / { role: "user", response: "" }
+    updatedConversationCache.push({role: 'user', content: userResponse});
+    updatedConversationCache.push({
+      role: responseRole,
+      content: responseContent,
+    });
+
+    let newError = '';
+    if (parsedResponseContent[0]?.error) {
+      newError = parsedResponseContent[0].error;
+    }
+
+    const updatedConversation = JSON.parse(JSON.stringify(conversation));
+
+    updatedConversation.push({role: 'user', response: userResponse});
+    updatedConversation.push({
+      role: 'system',
+      response: parsedResponseContent?.response,
+      suggestion: parsedResponseContent?.suggestion,
+      error: newError,
+    });
+
+    setConversation([...updatedConversation]);
   };
 
   const parseGPTOutput = () => {};
@@ -243,11 +256,11 @@ function App(): JSX.Element {
   };
 
   const onRefreshSession = () => {
-    setConversation([])
-    setConversationCache([])
-    handlePrompt()
-    hideDialog()
-  }
+    setConversation([]);
+    setConversationCache([]);
+    handlePrompt();
+    hideDialog();
+  };
 
   return (
     <PaperProvider theme={theme}>
@@ -427,7 +440,11 @@ function App(): JSX.Element {
           </Dialog.Content>
           <Dialog.Actions>
             <Button onPress={hideDialog}>Cancel</Button>
-            <Button onPress={onRefreshSession} compact style={{borderRadius: 2}} mode="contained">
+            <Button
+              onPress={onRefreshSession}
+              compact
+              style={{borderRadius: 2}}
+              mode="contained">
               Refresh Session
             </Button>
           </Dialog.Actions>
