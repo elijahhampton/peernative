@@ -1,3 +1,4 @@
+//@ts-nocheck
 /**
  * Sample React Native App
  * https://github.com/facebook/react-native
@@ -17,14 +18,6 @@ import {
   View,
   GestureResponderEvent,
 } from 'react-native';
-import {Input, HStack} from 'native-base';
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 
 import {
   Button,
@@ -65,6 +58,7 @@ function App(): JSX.Element {
   const [speaking, setSpeaking] = useState<boolean>(false);
   const [isLoading, setLoading] = useState(false);
   const [conversation, setConversation] = useState<Array<IResponse>>([]);
+  const [conversationCache, setConversationCache] = useState<Array<any>>([])
 
   const speechStartHandler = e => {
     console.log('speechStart successful', e);
