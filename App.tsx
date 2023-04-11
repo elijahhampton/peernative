@@ -26,21 +26,30 @@ import {
   Divider,
   Provider as PaperProvider,
   IconButton,
+  Portal,
+  Dialog,
   Surface,
   Text,
   TouchableRipple,
+  TextInput,
 } from 'react-native-paper';
 import {LinearGradientText} from 'react-native-linear-gradient-text';
-import {NativeBaseProvider, Box} from 'native-base';
+import {NativeBaseProvider, Box, HStack, Stack, Input} from 'native-base';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Voice from '@react-native-community/voice';
 import axios, {AxiosError, AxiosResponse} from 'axios';
+import DropDown from 'react-native-paper-dropdown';
+
 Icon.loadFont();
 const theme = {
   ...DefaultTheme,
+  version: 3,
   colors: {
     ...DefaultTheme.colors,
-    primary: 'tomato',
+    primaryContainer: 'red',
+    background: '#FFFFFF',
+    surface: '#FFFFFF',
+    primary: 'blue',
     secondary: 'yellow',
   },
 };
@@ -50,15 +59,50 @@ interface IResponse {
   role: string;
 }
 
-type PeerResponse = IResponse & {suggestion: string, error?: string};
+type PeerResponse = IResponse & {suggestion: string; error?: string};
 type UserResponse = IResponse;
+
+interface IFilterState {
+  desired_training_level: string;
+  language: string;
+}
+
+const LANGUAGE_LEVELS = [
+  {label: 'A1', value: 'A1'},
+  {label: 'A2', value: 'A2'},
+  {label: 'B1', value: 'B1'},
+  {label: 'B2', value: 'B2'},
+  {label: 'C1', value: 'C1'},
+  {label: 'C2', value: 'C2'},
+];
+const LANGUAGES = [
+  {label: 'English', value: 'english'},
+  {label: 'Spanish', value: 'spanish'},
+];
 
 function App(): JSX.Element {
   const hasSessionStarted = useRef<any>(false);
   const [speaking, setSpeaking] = useState<boolean>(false);
   const [isLoading, setLoading] = useState(false);
   const [conversation, setConversation] = useState<Array<IResponse>>([]);
-  const [conversationCache, setConversationCache] = useState<Array<any>>([])
+  const [conversationCache, setConversationCache] = useState<Array<any>>([]);
+  const [filters, setFilters] = useState<IFilterState>({
+    desired_training_level: 'B2',
+    language: 'english',
+    topic: '',
+  });
+  const [dropdownVisibilities, setDropdownVisibilities] = useState({
+    desired_training_level: false,
+    language: false,
+  });
+  const [filtersDialogIsVisible, setFiltersDialogIsVisible] =
+    useState<boolean>(false);
+
+  const showDialog = () => {
+    setFiltersDialogIsVisible(true);
+  };
+
+  const hideDialog = () => setFiltersDialogIsVisible(false);
 
   const speechStartHandler = e => {
     console.log('speechStart successful', e);
@@ -105,7 +149,7 @@ function App(): JSX.Element {
     Voice.onSpeechStart = speechStartHandler;
     Voice.onSpeechEnd = speechEndHandler;
     Voice.onSpeechResults = speechResultsHandler;
-    handlePrompt();
+    //handlePrompt();
     return () => {
       Voice.destroy().then(Voice.removeAllListeners);
     };
@@ -153,7 +197,7 @@ function App(): JSX.Element {
         console.log(response.data);
 
         if (response.data?.error) {
-          throw new Error(response.data?.error)
+          throw new Error(response.data?.error);
         }
 
         setConversation(prevState => [...prevState, response.data]);
@@ -197,6 +241,13 @@ function App(): JSX.Element {
   const renderSystemResponse = (response: IResponse): JSX.Element => {
     return <Box />;
   };
+
+  const onRefreshSession = () => {
+    setConversation([])
+    setConversationCache([])
+    handlePrompt()
+    hideDialog()
+  }
 
   return (
     <PaperProvider theme={theme}>
@@ -247,7 +298,7 @@ function App(): JSX.Element {
                 alignItems: 'center',
                 width: '100%',
               }}>
-              <HStack space={1} alignItems="center" style={{}}>
+              <HStack space={2} alignItems="center" style={{}}>
                 <Surface
                   elevation={0}
                   style={{
@@ -292,7 +343,7 @@ function App(): JSX.Element {
                     </TouchableRipple>
 
                     <IconButton
-                      disabled
+                      onPress={showDialog}
                       style={{marginLeft: 0, marginRight: 0}}
                       icon="filter-variant"
                       iconColor="black"
@@ -306,6 +357,81 @@ function App(): JSX.Element {
         </Box>
 
         <SafeAreaView />
+
+        <Dialog
+          style={{borderRadius: 11}}
+          visible={filtersDialogIsVisible}
+          onDismiss={hideDialog}>
+          <Dialog.Title>Modify Filters</Dialog.Title>
+          <Dialog.Content>
+            <Stack space={3}>
+              <TextInput
+                variant="outlined"
+                label="Topic"
+                value={filters['topic']}
+                onChangeText={text =>
+                  setFilters({
+                    topic: filters['topic'],
+                  })
+                }
+              />
+
+              <DropDown
+                label={'Training Target'}
+                mode={'outlined'}
+                visible={dropdownVisibilities['desired_training_level']}
+                showDropDown={() =>
+                  setDropdownVisibilities({
+                    desired_training_level: true,
+                  })
+                }
+                onDismiss={() =>
+                  setDropdownVisibilities({
+                    desired_training_level: false,
+                  })
+                }
+                value={filters['desired_training_level']}
+                setValue={value =>
+                  setFilters({
+                    ...filters,
+                    desired_training_level: value,
+                  })
+                }
+                list={LANGUAGE_LEVELS}
+              />
+
+              <DropDown
+                label={'Language'}
+                mode={'outlined'}
+                visible={dropdownVisibilities['language']}
+                showDropDown={() =>
+                  setDropdownVisibilities({
+                    language: true,
+                  })
+                }
+                onDismiss={() =>
+                  setDropdownVisibilities({
+                    language: false,
+                  })
+                }
+                value={filters['language']}
+                setValue={value =>
+                  setFilters({
+                    ...filters,
+                    language: value,
+                  })
+                }
+                list={LANGUAGES}
+              />
+            </Stack>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={hideDialog}>Cancel</Button>
+            <Button onPress={onRefreshSession} compact style={{borderRadius: 2}} mode="contained">
+              Refresh Session
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
       </NativeBaseProvider>
     </PaperProvider>
   );
