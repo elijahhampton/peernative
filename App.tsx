@@ -41,6 +41,7 @@ import axios, {AxiosError, AxiosResponse} from 'axios';
 import DropDown from 'react-native-paper-dropdown';
 
 Icon.loadFont();
+
 const theme = {
   ...DefaultTheme,
   version: 3,
@@ -82,6 +83,7 @@ const LANGUAGES = [
 
 function App(): JSX.Element {
   const hasSessionStarted = useRef<any>(false);
+  const [textInputVal, setTextInputVal] = React.useState('');
   const [speaking, setSpeaking] = useState<boolean>(false);
   const [isLoading, setLoading] = useState(false);
   const [conversation, setConversation] = useState<Array<IResponse>>([]);
@@ -145,16 +147,6 @@ function App(): JSX.Element {
     setTextInputVal('');
   };
 
-  useEffect(() => {
-    Voice.onSpeechStart = speechStartHandler;
-    Voice.onSpeechEnd = speechEndHandler;
-    Voice.onSpeechResults = speechResultsHandler;
-    //handlePrompt();
-    return () => {
-      Voice.destroy().then(Voice.removeAllListeners);
-    };
-  }, []);
-
   const handlePrompt = () => {
     console.log('Prompting ChatGPT');
     axios('http://localhost:3001/greeting', {
@@ -183,50 +175,52 @@ function App(): JSX.Element {
       response: textInputVal,
     };
 
-    const axiosResponse = await axios(`http://localhost:3001/reply`, {
+    await axios(`http://localhost:3001/reply`, {
       ...commonAxiosConfig,
       data: JSON.stringify({
         userResponse,
         pastConversation: conversationCache,
       }),
-    });
+    })
+      .then(axiosResponse => {
+        const replyResponse = axiosResponse.data.replyResponse;
+        const responseContent = String(replyResponse.content).replace('.', '');
+        const parsedResponseContent = JSON.parse(responseContent);
+        const responseRole = replyResponse.role;
 
-    const replyResponse = axiosResponse.data.replyResponse;
-    const responseContent = String(replyResponse.content).replace('.', '');
-    const parsedResponseContent = JSON.parse(responseContent);
-    const responseRole = replyResponse.role;
+        const updatedConversationCache = JSON.parse(
+          JSON.stringify(conversationCache),
+        );
 
-    const updatedConversationCache = JSON.parse(
-      JSON.stringify(conversationCache),
-    );
+        updatedConversationCache.push({role: 'user', content: userResponse});
+        updatedConversationCache.push({
+          role: responseRole,
+          content: responseContent,
+        });
 
-    updatedConversationCache.push({role: 'user', content: userResponse});
-    updatedConversationCache.push({
-      role: responseRole,
-      content: responseContent,
-    });
+        let newError = '';
+        if (parsedResponseContent[0]?.error) {
+          newError = parsedResponseContent[0].error;
+        }
 
-    let newError = '';
-    if (parsedResponseContent[0]?.error) {
-      newError = parsedResponseContent[0].error;
-    }
+        const updatedConversation = JSON.parse(JSON.stringify(conversation));
 
-    const updatedConversation = JSON.parse(JSON.stringify(conversation));
+        updatedConversation.push({role: 'user', response: userResponse});
+        updatedConversation.push({
+          role: 'system',
+          response: parsedResponseContent?.response,
+          suggestion: parsedResponseContent?.suggestion,
+          error: newError,
+        });
 
-    updatedConversation.push({role: 'user', response: userResponse});
-    updatedConversation.push({
-      role: 'system',
-      response: parsedResponseContent?.response,
-      suggestion: parsedResponseContent?.suggestion,
-      error: newError,
-    });
-
-    setConversation([...updatedConversation]);
+        setConversation([...updatedConversation]);
+      })
+      .catch(error => {
+        console.log(error?.message);
+      });
   };
 
   const parseGPTOutput = () => {};
-
-  const [textInputVal, setTextInputVal] = React.useState('');
 
   const handleChangeTextInput = (text: string) => setTextInputVal(text);
 
@@ -244,15 +238,15 @@ function App(): JSX.Element {
   };
 
   const renderUserResponse = (response: UserResponse): JSX.Element => {
-    return <Box />;
+    return <Text>{response?.response}</Text>;
   };
 
   const renderPeerResponse = (response: PeerResponse): JSX.Element => {
-    return <Box />;
+    return <Text>{response?.response}</Text>;
   };
 
   const renderSystemResponse = (response: IResponse): JSX.Element => {
-    return <Box />;
+    return <Text>{response?.response}</Text>;
   };
 
   const onRefreshSession = () => {
@@ -261,6 +255,16 @@ function App(): JSX.Element {
     handlePrompt();
     hideDialog();
   };
+
+  useEffect(() => {
+    Voice.onSpeechStart = speechStartHandler;
+    Voice.onSpeechEnd = speechEndHandler;
+    Voice.onSpeechResults = speechResultsHandler;
+    //handlePrompt();
+    return () => {
+      Voice.destroy().then(Voice.removeAllListeners);
+    };
+  }, []);
 
   return (
     <PaperProvider theme={theme}>
