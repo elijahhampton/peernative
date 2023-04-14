@@ -2,7 +2,7 @@ import axios from 'axios'
 import { BASE_ENDPOINT, ROUTES } from '../constants/api'
 
 const sendGreetingWithTargets = async (greeting: string, user_language: string, user_target_language: string, topic: string, training_level: string) => {
-    const axiosResponse = await axios(`${BASE_ENDPOINT}/${ROUTES.greeting}`, {
+  const axiosResponse = await axios(`${BASE_ENDPOINT}/${ROUTES.greeting}`, {
         method: 'POST',
         data: JSON.stringify({
           greeting,

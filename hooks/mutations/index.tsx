@@ -22,7 +22,7 @@ function useSendGreetingWithTargets(): UseMutationResult<
 > {
   return useMutation(
     ['send_greeting_with_targets'],
-    ({greeting, user_target_language, user_language, training_level, topic}) =>
+    ({greeting, user_target_language, user_language, topic, training_level}) =>
       sendGreetingWithTargets(
         greeting,
         user_target_language,
