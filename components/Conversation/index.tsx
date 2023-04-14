@@ -1,8 +1,8 @@
-//@ts-nocheck
-import { memo } from 'react'
+import {memo, useEffect, useRef} from 'react';
 import {ScrollView, Text, StyleSheet} from 'react-native';
 import {Box, Stack, HStack} from 'native-base';
 import Icon from 'react-native-vector-icons/Ionicons';
+import LoadingDots from 'react-native-loading-dots';
 
 Icon.loadFont();
 
@@ -15,15 +15,26 @@ interface IResponse {
   role: string;
 }
 
-type PeerResponse = IResponse & {suggestion: string; error?: string};
+type PeerResponse = IResponse & {suggestion: string; error?: string; loading: boolean; };
 type UserResponse = IResponse;
 
 function Conversation(props: IConversationProps) {
   const {conversation} = props;
 
+  const scrollViewRef = useRef();
+
   return (
     <Box style={{flex: 1}}>
-      <ScrollView contentContainerStyle={{paddingLeft: 20, paddingRight: 20}}>
+      <ScrollView
+        ref={scrollViewRef}
+        contentContainerStyle={{
+          paddingBottom: 10,
+          paddingLeft: 20,
+          paddingRight: 20,
+        }}
+        onContentSizeChange={() =>
+          scrollViewRef.current.scrollToEnd({animated: true})
+        }>
         <Stack space={5}>
           {conversation.map((response: IResponse) => {
             return renderResponse(response);
@@ -73,6 +84,30 @@ const renderUserResponse = (response: UserResponse): JSX.Element => {
 };
 
 const renderPeerResponse = (response: PeerResponse): JSX.Element => {
+  if (!!response?.isLoading) {
+    return (
+      <>
+        <Box
+          style={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+          }}>
+          <Box
+            style={{
+              padding: 10,
+              //  backgroundColor: '#B3E5FC',
+              maxWidth: 250,
+              borderRadius: 10,
+            }}>
+            <LoadingDots size={12} />
+          </Box>
+        </Box>
+      </>
+    );
+  }
+
   return (
     <>
       <Box
@@ -119,6 +154,29 @@ const renderPeerResponse = (response: PeerResponse): JSX.Element => {
 };
 
 const renderSystemResponse = (response: IResponse): JSX.Element => {
+  if (!!response?.isLoading) {
+    return (
+      <>
+        <Box
+          style={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+          }}>
+          <Box
+            style={{
+              padding: 10,
+              //  backgroundColor: '#B3E5FC',
+              maxWidth: 250,
+              borderRadius: 10,
+            }}>
+            <LoadingDots size={12} />
+          </Box>
+        </Box>
+      </>
+    );
+  }
   return (
     <>
       <Box
@@ -198,4 +256,4 @@ const styles = StyleSheet.create({
 });
 
 export default Conversation;
-export { type IResponse }
+export {type IResponse};

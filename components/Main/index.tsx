@@ -106,6 +106,7 @@ function Main(): JSX.Element {
     setConversation((prevState: any) => [
       ...prevState,
       {role: 'user', content: textInputVal},
+      {role: 'assistant', content: '', isLoading: true}
     ]);
 
     const oldTextInputVal = textInputVal;
@@ -152,8 +153,13 @@ function Main(): JSX.Element {
   };
 
   const handleRespondToGpt = (myResponse: string) => {
-    setThinking(true);
+    setConversation((prevState: any) => [
+      ...prevState,
+      {role: 'assistant', content: '', isLoading: true}
+    ]);
 
+    setThinking(true);
+    
     onRespondAsync({
       response: myResponse,
       pastConversation: conversationCache,

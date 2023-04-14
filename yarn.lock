@@ -6959,6 +6959,11 @@ react-native-linear-gradient@^2.6.2:
   resolved "https://registry.yarnpkg.com/react-native-linear-gradient/-/react-native-linear-gradient-2.6.2.tgz#56598a76832724b2afa7889747635b5c80948f38"
   integrity sha512-Z8Xxvupsex+9BBFoSYS87bilNPWcRfRsGC0cpJk72Nxb5p2nEkGSBv73xZbEHnW2mUFvP+huYxrVvjZkr/gRjQ==
 
+react-native-loading-dots@^1.3.2:
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/react-native-loading-dots/-/react-native-loading-dots-1.3.2.tgz#212f7a96a9a948b4978c92ad72fcac7e2b32f7ad"
+  integrity sha512-e77PIBVm+3HBL5PJsypE5a/mMY7Zib0X1RGUsgdipXFhnwQ1GSuZhDG6tjG4J55pvyY5g5YPXezJbd7mpbpOyQ==
+
 react-native-paper-dropdown@^1.0.7:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/react-native-paper-dropdown/-/react-native-paper-dropdown-1.0.7.tgz#64fe004b05b73ca5c781873d800ac5062b35bdc9"
