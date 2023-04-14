@@ -25,10 +25,10 @@ function useSendGreetingWithTargets(): UseMutationResult<
     ({greeting, user_target_language, user_language, topic, training_level}) =>
       sendGreetingWithTargets(
         greeting,
-        user_target_language,
         user_language,
-        training_level,
+        user_target_language,
         topic,
+        training_level
       ),
   );
 }
