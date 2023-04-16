@@ -33,7 +33,7 @@ const sendResponse = async (userResponse: string, pastConversation: Array<any>) 
         },
       })
 
-    return axiosResponse.data.replyResponse
+    return axiosResponse.data
 }
 
 export { sendGreetingWithTargets, sendResponse }

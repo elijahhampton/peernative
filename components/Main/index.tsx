@@ -13,21 +13,7 @@ import {
   Dimensions,
 } from 'react-native';
 
-import {
-  Button,
-  MD3Colors,
-  MD3LightTheme as DefaultTheme,
-  Divider,
-  Provider as PaperProvider,
-  IconButton,
-  Portal,
-  Dialog,
-  Surface,
-  Text,
-  TouchableRipple,
-  TextInput,
-  Avatar,
-} from 'react-native-paper';
+import {Divider} from 'react-native-paper';
 import {LinearGradientText} from 'react-native-linear-gradient-text';
 import {NativeBaseProvider, Box, HStack, Stack, Input} from 'native-base';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -44,8 +30,8 @@ import {
 import {TOPICS} from '../../constants/filters';
 import InputController from '../InputController';
 import FiltersDialog from '../FiltersDialog';
-import { useNavigation } from '@react-navigation/native';
-import {DeviceEventEmitter} from "react-native"
+import {useNavigation} from '@react-navigation/native';
+import {DeviceEventEmitter} from 'react-native';
 
 Icon.loadFont();
 
@@ -105,13 +91,12 @@ function Main(): JSX.Element {
     topic: string,
     training_level: string,
   ) => {
-
-    const userTimestamp = new Date()
+    const userTimestamp = new Date();
 
     setConversation((prevState: any) => [
       ...prevState,
       {role: 'user', content: textInputVal, timestamp: userTimestamp},
-      {role: 'assistant', content: '', isLoading: true}
+      {role: 'assistant', content: '', isLoading: true},
     ]);
 
     const oldTextInputVal = textInputVal;
@@ -126,16 +111,20 @@ function Main(): JSX.Element {
       training_level,
     })
       .then((axiosResponse: any) => {
+        console.log(axiosResponse?.timestamp);
+        console.log('@@@@@@@@@@@@');
+
         let updatedChatGptCache = JSON.parse(JSON.stringify(conversationCache));
         let updatedConversation = JSON.parse(JSON.stringify(conversation));
- 
+
         const {
           greetingResponse: {role, content},
           originalPrompt,
-          timestamp
+          timestamp,
         } = axiosResponse;
 
-        updatedChatGptCache.push({role: 'system', content: originalPrompt });
+        console.log(timestamp);
+        updatedChatGptCache.push({role: 'system', content: originalPrompt});
 
         const parsedContent = JSON.parse(content)[0];
         const {response, suggestion} = parsedContent;
@@ -146,9 +135,19 @@ function Main(): JSX.Element {
         }
 
         //@ts-ignore
-        updatedConversation.push({role: 'user', content: oldTextInputVal, timestamp: userTimestamp })
-        updatedConversation.push({role, response, suggestion, error, timestamp });
-        updatedChatGptCache.push({role: 'assistant', content, timestamp });
+        updatedConversation.push({
+          role: 'user',
+          content: oldTextInputVal,
+          timestamp: userTimestamp,
+        });
+        updatedConversation.push({
+          role,
+          response,
+          suggestion,
+          error,
+          timestamp: timestamp,
+        });
+        updatedChatGptCache.push({role: 'assistant', content});
 
         setConversation([...updatedConversation]);
         setConversationCache([...updatedChatGptCache]);
@@ -159,22 +158,22 @@ function Main(): JSX.Element {
   };
 
   const handleRespondToGpt = (myResponse: string) => {
-    const userTimestamp = new Date()
+    const userTimestamp = new Date();
 
     setConversation((prevState: any) => [
       ...prevState,
-      {role: 'assistant', content: '', isLoading: true}
+      {role: 'assistant', content: '', isLoading: true},
     ]);
 
     setThinking(true);
-    
+
     onRespondAsync({
       response: myResponse,
       pastConversation: conversationCache,
     })
       .then((axiosResponse: any) => {
-        const gptTimestamp = axiosResponse.data.timestamp
-        const replyResponse = axiosResponse;
+        const gptTimestamp = axiosResponse?.timestamp;
+        const replyResponse = axiosResponse?.replyResponse;
         const responseContent = String(replyResponse.content).replace('.', '');
         const parsedResponseContent = JSON.parse(responseContent);
         const responseRole = replyResponse.role;
@@ -183,7 +182,7 @@ function Main(): JSX.Element {
           JSON.stringify(conversationCache),
         );
 
-        updatedConversationCache.push({role: 'user', content: myResponse });
+        updatedConversationCache.push({role: 'user', content: myResponse});
         updatedConversationCache.push({
           role: responseRole,
           content: responseContent,
@@ -197,7 +196,7 @@ function Main(): JSX.Element {
         updatedConversation.push({
           role: 'user',
           content: myResponse,
-          timestamp: userTimestamp
+          timestamp: userTimestamp,
         });
 
         updatedConversation.push({
@@ -205,13 +204,13 @@ function Main(): JSX.Element {
           response: parsedResponseContent[0]?.response,
           suggestion: parsedResponseContent[0]?.suggestion,
           error: newError,
-          timestamp: gptTimestamp
+          timestamp: gptTimestamp,
         });
 
         setConversation([...updatedConversation]);
       })
       .catch((error: AxiosError) => {
-        console.log(error);
+        console.log(error?.message);
       })
       .finally(() => {
         setThinking(false);
@@ -268,12 +267,13 @@ function Main(): JSX.Element {
     setConversationCache([]);
   };
 
-  const navigation = useNavigation()
+  const navigation = useNavigation();
 
-  DeviceEventEmitter.addListener("new_filters", (eventData) => {
-    setFilters({ ... eventData })
-    onRefreshSession()
-  })
+  DeviceEventEmitter.addListener('new_filters', eventData => {
+    setFilters({...eventData});
+    onRefreshSession();
+    navigation.navigate('Home');
+  });
 
   return (
     //@ts-ignore
@@ -289,7 +289,10 @@ function Main(): JSX.Element {
           style={
             hasSessionStarted ? styles.sessionStarted : styles.sessionAwaiting
           }>
-          <Conversation conversation={conversation} sessionStarted={hasSessionStarted} />
+          <Conversation
+            conversation={conversation}
+            sessionStarted={hasSessionStarted}
+          />
         </Box>
 
         <Divider />
@@ -313,7 +316,6 @@ const styles = StyleSheet.create({
   sessionAwaiting: {
     flex: 1,
     backgroundColor: 'rgb(248, 250 253)',
-    
   },
 });
 
