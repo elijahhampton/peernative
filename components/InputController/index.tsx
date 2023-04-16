@@ -1,8 +1,9 @@
-import {KeyboardAvoidingView} from 'react-native';
+import {KeyboardAvoidingView, StyleSheet} from 'react-native';
 import {Box, Stack, HStack, Input} from 'native-base';
 import {Surface, IconButton, TouchableRipple} from 'react-native-paper';
 import Voice from '@react-native-community/voice';
 import {useState, useEffect} from 'react';
+import { BlurView } from "@react-native-community/blur";
 
 //TODO: Keep microphone icon visible instead of send icon if user is speaking
 
@@ -66,18 +67,22 @@ function InputController(props: IInputControllerProps) {
       <Box
         style={{
           padding: 10,
+          marginBottom: 20,
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
           width: '100%',
         }}>
-        <HStack space={2} alignItems="center" style={{}}>
+        <HStack space={0} alignItems="center" style={styles.inputContainer}>
+        <BlurView style={styles.blur} blurType='light' tint='#fff' intensity={10} />
           <Surface
             elevation={0}
             style={{
               width: '100%',
               borderWidth: 1,
               borderColor: '#ddd',
+margin: 10,
+              padding: 3,
               flex: 1,
               borderRadius: 20,
             }}>
@@ -96,22 +101,22 @@ function InputController(props: IInputControllerProps) {
               icon="send"
               iconColor="#FFFFFF"
               size={17}
-              style={{paddingLeft: 3, backgroundColor: '#1E88E5'}}
+              style={{paddingLeft: 3, marginRight: 15, backgroundColor: '#1E88E5'}}
               onPress={onSubmit}
             />
           ) : (
             <>
-              <TouchableRipple>
+    
                 <IconButton
                   onPress={
                     speaking ? () => stopRecording() : () => startRecording()
                   }
-                  style={{marginLeft: 0, marginRight: 0}}
+                  style={{marginLeft: 0, marginRight: 15}}
                   iconColor={speaking ? '#2196F3' : 'black'}
                   icon="microphone"
                   size={20}
                 />
-              </TouchableRipple>
+        
             </>
           )}
         </HStack>
@@ -119,5 +124,51 @@ function InputController(props: IInputControllerProps) {
     </KeyboardAvoidingView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    padding: 10,
+  },
+  messageContainer: {
+    flex: 1,
+  },
+  inputContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1,
+  },
+  surface: {
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    elevation: 10,
+    marginBottom: 10,
+    overflow: 'hidden',
+  },
+  message: {
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    backgroundColor: 'transparent',
+  },
+  input: {
+    backgroundColor: 'transparent',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 10,
+  },
+  blur: {
+    padding: 20,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+});
 
 export default InputController

@@ -1,13 +1,18 @@
 import {memo, useEffect, useRef} from 'react';
-import {ScrollView, Text, StyleSheet} from 'react-native';
+import {ScrollView, Text, StyleSheet, View} from 'react-native';
 import {Box, Stack, HStack} from 'native-base';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LoadingDots from 'react-native-loading-dots';
+import moment from 'moment';
+import React from 'react';
+import { Button } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 
 Icon.loadFont();
 
 interface IConversationProps {
   conversation: Array<any>;
+  sessionStarted: boolean;
 }
 
 interface IResponse {
@@ -19,24 +24,27 @@ type PeerResponse = IResponse & {suggestion: string; error?: string; loading: bo
 type UserResponse = IResponse;
 
 function Conversation(props: IConversationProps) {
-  const {conversation} = props;
+  const {conversation, sessionStarted} = props;
 
   const scrollViewRef = useRef();
+
+  const navigation = useNavigation()
 
   return (
     <Box style={{flex: 1}}>
       <ScrollView
         ref={scrollViewRef}
         contentContainerStyle={{
-          paddingBottom: 10,
-          paddingLeft: 20,
-          paddingRight: 20,
+          backgroundColor: 'rgb(249, 251, 254)',
+          paddingBottom: 40,
+          paddingLeft: 10,
+          paddingRight: 10
         }}
         onContentSizeChange={() =>
           scrollViewRef.current.scrollToEnd({animated: true})
         }>
-        <Stack space={5}>
-          {conversation.map((response: IResponse) => {
+        <Stack space={5} style={{width: '100%' }}>
+          {sessionStarted && conversation.map((response: IResponse) => {
             return renderResponse(response);
           })}
         </Stack>
@@ -61,22 +69,25 @@ const renderResponse = (response: IResponse): JSX.Element => {
 const renderUserResponse = (response: UserResponse): JSX.Element => {
   return (
     <Box
-      sx={{
+      style={{
         width: '100%',
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'flex-start',
+        justifyContent: 'flex-end'
       }}>
       <Box
         style={{
-          left: 0,
           padding: 10,
-          //     backgroundColor: '#eee',
           maxWidth: 250,
-          borderRadius: 10,
+          borderRadius: 12,
+          backgroundColor: '#B3E5FC',
+          justifyContent: 'flex-end'
         }}>
-        <Text style={{fontSize: 16, fontWeight: '500'}}>
+        <Text style={{ fontSize: 15, fontWeight: '400' }}>
           {response?.content}
+        </Text>
+        <Text style={{ fontSize: 12, paddingTop: 4, fontWeight: 400, color: '#aaa'}}>
+          {moment(new Date()).format('MM/DD/YYYY hh:mm A').toString()}
         </Text>
       </Box>
     </Box>
@@ -92,7 +103,7 @@ const renderPeerResponse = (response: PeerResponse): JSX.Element => {
             width: '100%',
             display: 'flex',
             flexDirection: 'row',
-            justifyContent: 'flex-end',
+            justifyContent: 'flex-start',
           }}>
           <Box
             style={{
@@ -101,7 +112,7 @@ const renderPeerResponse = (response: PeerResponse): JSX.Element => {
               maxWidth: 250,
               borderRadius: 10,
             }}>
-            <LoadingDots size={12} />
+            <LoadingDots size={12} colors={['#2196F3', '#90CAF9', '#E1F5FE', '#EEE']} />
           </Box>
         </Box>
       </>
@@ -115,18 +126,22 @@ const renderPeerResponse = (response: PeerResponse): JSX.Element => {
           width: '100%',
           display: 'flex',
           flexDirection: 'row',
-          justifyContent: 'flex-end',
+          justifyContent: 'flex-start',
         }}>
         <Box
           style={{
             padding: 10,
-            // backgroundColor: '#B3E5FC',
+            borderRadius: 12,
+            backgroundColor: '#eee',
             maxWidth: 250,
             borderRadius: 10,
           }}>
-          <Text style={{fontSize: 16, fontWeight: '500'}}>
+          <Text style={{ fontSize: 15, fontWeight: '400' }}>
             {response?.response}
           </Text>
+          <Text style={{ fontSize: 12, paddingTop: 4, fontWeight: 400, color: '#aaa'}}>
+          {moment(response?.timestamp).format('MM/DD/YYYY hh:mm A').toString()}
+        </Text>
         </Box>
       </Box>
 
@@ -144,9 +159,12 @@ const renderPeerResponse = (response: PeerResponse): JSX.Element => {
             maxWidth: 250,
             borderRadius: 10,
           }}>
-          <Text style={{fontSize: 16, fontWeight: '500'}}>
+          <Text style={{ fontSize: 15, fontWeight: '400' }}>
             {response?.response}
           </Text>
+          <Text style={{ fontSize: 12, paddingTop: 4, fontWeight: 400, color: '#aaa'}}>
+          {moment(response?.timestamp).format('MM/DD/YYYY hh:mm A').toString()}
+        </Text>
         </Box>
       </Box>
     </>
@@ -162,11 +180,11 @@ const renderSystemResponse = (response: IResponse): JSX.Element => {
             width: '100%',
             display: 'flex',
             flexDirection: 'row',
-            justifyContent: 'flex-end',
+            justifyContent: 'flex-start'
           }}>
           <Box
             style={{
-              padding: 10,
+
               //  backgroundColor: '#B3E5FC',
               maxWidth: 250,
               borderRadius: 10,
@@ -184,18 +202,21 @@ const renderSystemResponse = (response: IResponse): JSX.Element => {
           width: '100%',
           display: 'flex',
           flexDirection: 'row',
-          justifyContent: 'flex-end',
+          justifyContent: 'flex-start'
         }}>
         <Box
           style={{
             padding: 10,
-            //  backgroundColor: '#B3E5FC',
+              backgroundColor: '#eee',
             maxWidth: 250,
-            borderRadius: 10,
+            borderRadius: 12,
           }}>
-          <Text style={{fontSize: 16, fontWeight: '500'}}>
+          <Text style={{ fontSize: 15, fontWeight: '400' }}>
             {response?.response}
           </Text>
+          <Text style={{ fontSize: 12, paddingTop: 4, fontWeight: 400, color: '#aaa'}}>
+          {moment(response?.timestamp).format('MM/DD/YYYY hh:mm A').toString()}
+        </Text>
         </Box>
       </Box>
 
@@ -205,7 +226,7 @@ const renderSystemResponse = (response: IResponse): JSX.Element => {
             width: '100%',
             display: 'flex',
             flexDirection: 'row',
-            justifyContent: 'flex-end',
+            justifyContent: 'flex-start'
           }}>
           <Box>
             <Box

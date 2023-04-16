@@ -1,9 +1,11 @@
-import React, {useState} from 'react';
-import {Dialog, Button} from 'react-native-paper';
-import {StyleSheet} from 'react-native';
-import {Stack, HStack, Modal, Center} from 'native-base';
+import {Stack} from 'native-base';
+import React, {useState, useEffect} from 'react';
+import {View} from 'react-native';
 import DropDown from 'react-native-paper-dropdown';
-import {LANGUAGES, LANGUAGE_LEVELS, TOPICS} from '../../constants/filters';
+import {TOPICS, LANGUAGE_LEVELS, LANGUAGES} from '../../constants/filters';
+import {Button} from 'react-native-paper';
+import {DeviceEventEmitter} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 interface IFilterState {
   desired_training_level: string;
@@ -12,18 +14,14 @@ interface IFilterState {
   target_language: string;
 }
 
-interface IFiltersDialogProps {
-  filters: IFilterState;
-  visible: boolean;
-  onSave: () => void;
-  onDismiss: () => void;
-  setFilters: (
-    params: any,
-  ) => React.Dispatch<React.SetStateAction<IFilterState>>;
-}
-
-function FiltersDialog(props: IFiltersDialogProps) {
-  const {filters, setFilters, visible, onDismiss, onSave} = props;
+function Welcome() {
+    const navigation = useNavigation()
+  const [filters, setFilters] = useState<IFilterState>({
+    desired_training_level: 'B2',
+    language: 'English',
+    target_language: 'Spanish',
+    topic: TOPICS[0].value,
+  });
 
   const [dropdownVisibilities, setDropdownVisibilities] = useState({
     desired_training_level: false,
@@ -32,14 +30,34 @@ function FiltersDialog(props: IFiltersDialogProps) {
     topic: false,
   });
 
+  const onGetStarted = () => {
+    DeviceEventEmitter.emit('new_filters', filters);
+    navigation.navigate('Home')
+  };
+
+  useEffect(() => {
+    return () => {
+      DeviceEventEmitter.removeAllListeners('new_filters');
+    };
+  }, []);
+
   return (
-    <Center>
-      <Modal size='xl' isOpen={visible} onClose={onDismiss}>
-        <Modal.Content>
-          <Modal.CloseButton />
-          <Modal.Header>Session Cutomization</Modal.Header>
-          <Modal.Body>
-          <Stack space={3}>
+    <View style={{flex: 1}}>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor:
+            'linear-gradient(90deg, rgba(123,192,246,1) 0%, rgba(255,255,255,1) 100%)',
+        }}></View>
+
+      <View
+        style={{
+          paddingTop: 15,
+          paddingBottom: 15,
+          flex: 1,
+          backgroundColor: '#FFF',
+        }}>
+        <Stack space={8} style={{paddingLeft: 20, paddingRight: 20}}>
           <DropDown
             label={'Topic'}
             mode={'outlined'}
@@ -144,34 +162,16 @@ function FiltersDialog(props: IFiltersDialogProps) {
             list={LANGUAGES}
           />
         </Stack>
-          </Modal.Body>
-          <Modal.Footer>
+
         <Button
-          onPress={onSave}
-          compact
-          style={{borderRadius: 2}}
+          onPress={onGetStarted}
+          style={{margin: 20, padding: 3}}
           mode="contained">
-          Save
+          Get Started
         </Button>
-          </Modal.Footer>
-        </Modal.Content>
-      </Modal>
-    </Center>
+      </View>
+    </View>
   );
 }
 
-const styles = StyleSheet.create({
-  sessionStarted: {
-    flex: 1,
-    backgroundColor: 'rgb(248, 250 253)',
-  },
-  sessionAwaiting: {
-    flex: 1,
-    backgroundColor: 'rgb(248, 250 253)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
-
-export default FiltersDialog
+export default Welcome;

@@ -1,45 +1,58 @@
-import React, {useState} from 'react';
-import {Dialog, Button} from 'react-native-paper';
-import {StyleSheet} from 'react-native';
-import {Stack, HStack, Modal, Center} from 'native-base';
+import { useState, useEffect } from 'react'
+import {SafeAreaView, StyleSheet, View} from 'react-native';
+import {Appbar, Button} from 'react-native-paper';
+import {Box, Stack} from 'native-base';
+import { LANGUAGES, LANGUAGE_LEVELS, TOPICS } from '../../constants/filters';
+import React from 'react';
 import DropDown from 'react-native-paper-dropdown';
-import {LANGUAGES, LANGUAGE_LEVELS, TOPICS} from '../../constants/filters';
+import {DeviceEventEmitter} from "react-native"
+
+interface ISettingsProps {
+  navigation: any;
+}
 
 interface IFilterState {
-  desired_training_level: string;
-  language: string;
-  topic: string;
-  target_language: string;
-}
+    desired_training_level: string;
+    language: string;
+    topic: string;
+    target_language: string;
+  }
 
-interface IFiltersDialogProps {
-  filters: IFilterState;
-  visible: boolean;
-  onSave: () => void;
-  onDismiss: () => void;
-  setFilters: (
-    params: any,
-  ) => React.Dispatch<React.SetStateAction<IFilterState>>;
-}
+function Settings({navigation}: ISettingsProps) {
+    const [filters, setFilters] = useState<IFilterState>({
+        desired_training_level: 'B2',
+        language: 'English',
+        target_language: 'Spanish',
+        topic: TOPICS[0].value,
+      });
 
-function FiltersDialog(props: IFiltersDialogProps) {
-  const {filters, setFilters, visible, onDismiss, onSave} = props;
+    const [dropdownVisibilities, setDropdownVisibilities] = useState({
+        desired_training_level: false,
+        language: false,
+        target_language: false,
+        topic: false,
+      });
 
-  const [dropdownVisibilities, setDropdownVisibilities] = useState({
-    desired_training_level: false,
-    language: false,
-    target_language: false,
-    topic: false,
-  });
+      const onSaveSessionFilters = () => {
+        DeviceEventEmitter.emit("new_filters", filters);
+      }
+
+      useEffect(() => {
+        return () => {
+            DeviceEventEmitter.removeAllListeners("new_filters")
+          };
+        }, []);
+
 
   return (
-    <Center>
-      <Modal size='xl' isOpen={visible} onClose={onDismiss}>
-        <Modal.Content>
-          <Modal.CloseButton />
-          <Modal.Header>Session Cutomization</Modal.Header>
-          <Modal.Body>
-          <Stack space={3}>
+    <SafeAreaView style={{flex: 1, backgroundColor: 'rgb(248, 250 253)'}}>
+      <Appbar style={styles.header}>
+        <Appbar.BackAction onPress={() => navigation.goBack()} />
+        <Appbar.Content title="Settings" titleStyle={styles.title} style={styles.content} />
+      </Appbar>
+      <View style={{ flex: 1, display: 'flex', justifyContent: "space-between"}}>
+      <Stack space={8} style={{ paddingLeft: 20, paddingRight: 20 }}>
+        
           <DropDown
             label={'Topic'}
             mode={'outlined'}
@@ -144,34 +157,30 @@ function FiltersDialog(props: IFiltersDialogProps) {
             list={LANGUAGES}
           />
         </Stack>
-          </Modal.Body>
-          <Modal.Footer>
-        <Button
-          onPress={onSave}
-          compact
-          style={{borderRadius: 2}}
-          mode="contained">
-          Save
+
+        <Button onPress={onSaveSessionFilters} mode='contained' style={{ marginBottom: 20, width: '90%', alignSelf: 'center'}}>
+            Save
         </Button>
-          </Modal.Footer>
-        </Modal.Content>
-      </Modal>
-    </Center>
+        </View>
+
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  sessionStarted: {
-    flex: 1,
-    backgroundColor: 'rgb(248, 250 253)',
+    content: {
+        alignSelf: 'center'
+    },
+  title: {
+    fontSize: 20,
+    paddingTop: 10,
+    paddingBottom: 10,
+    fontWeight: '800',
   },
-  sessionAwaiting: {
-    flex: 1,
-    backgroundColor: 'rgb(248, 250 253)',
+  header: {
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: 'rgb(248, 250 253)',
   },
 });
 
-export default FiltersDialog
+export default Settings;

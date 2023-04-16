@@ -44,6 +44,8 @@ import {
 import {TOPICS} from '../../constants/filters';
 import InputController from '../InputController';
 import FiltersDialog from '../FiltersDialog';
+import { useNavigation } from '@react-navigation/native';
+import {DeviceEventEmitter} from "react-native"
 
 Icon.loadFont();
 
@@ -103,9 +105,12 @@ function Main(): JSX.Element {
     topic: string,
     training_level: string,
   ) => {
+
+    const userTimestamp = new Date()
+
     setConversation((prevState: any) => [
       ...prevState,
-      {role: 'user', content: textInputVal},
+      {role: 'user', content: textInputVal, timestamp: userTimestamp},
       {role: 'assistant', content: '', isLoading: true}
     ]);
 
@@ -123,13 +128,14 @@ function Main(): JSX.Element {
       .then((axiosResponse: any) => {
         let updatedChatGptCache = JSON.parse(JSON.stringify(conversationCache));
         let updatedConversation = JSON.parse(JSON.stringify(conversation));
-
+ 
         const {
           greetingResponse: {role, content},
           originalPrompt,
+          timestamp
         } = axiosResponse;
 
-        updatedChatGptCache.push({role: 'system', content: originalPrompt});
+        updatedChatGptCache.push({role: 'system', content: originalPrompt });
 
         const parsedContent = JSON.parse(content)[0];
         const {response, suggestion} = parsedContent;
@@ -140,9 +146,9 @@ function Main(): JSX.Element {
         }
 
         //@ts-ignore
-        updatedConversation.push({role: 'user', content: oldTextInputVal});
-        updatedConversation.push({role, response, suggestion, error});
-        updatedChatGptCache.push({role: 'assistant', content});
+        updatedConversation.push({role: 'user', content: oldTextInputVal, timestamp: userTimestamp })
+        updatedConversation.push({role, response, suggestion, error, timestamp });
+        updatedChatGptCache.push({role: 'assistant', content, timestamp });
 
         setConversation([...updatedConversation]);
         setConversationCache([...updatedChatGptCache]);
@@ -153,6 +159,8 @@ function Main(): JSX.Element {
   };
 
   const handleRespondToGpt = (myResponse: string) => {
+    const userTimestamp = new Date()
+
     setConversation((prevState: any) => [
       ...prevState,
       {role: 'assistant', content: '', isLoading: true}
@@ -165,6 +173,7 @@ function Main(): JSX.Element {
       pastConversation: conversationCache,
     })
       .then((axiosResponse: any) => {
+        const gptTimestamp = axiosResponse.data.timestamp
         const replyResponse = axiosResponse;
         const responseContent = String(replyResponse.content).replace('.', '');
         const parsedResponseContent = JSON.parse(responseContent);
@@ -174,7 +183,7 @@ function Main(): JSX.Element {
           JSON.stringify(conversationCache),
         );
 
-        updatedConversationCache.push({role: 'user', content: myResponse});
+        updatedConversationCache.push({role: 'user', content: myResponse });
         updatedConversationCache.push({
           role: responseRole,
           content: responseContent,
@@ -188,6 +197,7 @@ function Main(): JSX.Element {
         updatedConversation.push({
           role: 'user',
           content: myResponse,
+          timestamp: userTimestamp
         });
 
         updatedConversation.push({
@@ -195,61 +205,13 @@ function Main(): JSX.Element {
           response: parsedResponseContent[0]?.response,
           suggestion: parsedResponseContent[0]?.suggestion,
           error: newError,
+          timestamp: gptTimestamp
         });
 
         setConversation([...updatedConversation]);
       })
       .catch((error: AxiosError) => {
         console.log(error);
-      })
-      .finally(() => {
-        setThinking(false);
-      });
-
-    axios(`http://localhost:3001/reply`, {
-      ...commonAxiosConfig,
-      data: JSON.stringify({
-        userResponse: myResponse,
-        pastConversation: conversationCache,
-      }),
-    })
-      .then(axiosResponse => {
-        const replyResponse = axiosResponse.data.replyResponse;
-        const responseContent = String(replyResponse.content).replace('.', '');
-        const parsedResponseContent = JSON.parse(responseContent);
-        const responseRole = replyResponse.role;
-        let updatedConversation = JSON.parse(JSON.stringify(conversation));
-        let updatedConversationCache = JSON.parse(
-          JSON.stringify(conversationCache),
-        );
-
-        updatedConversationCache.push({role: 'user', content: myResponse});
-        updatedConversationCache.push({
-          role: responseRole,
-          content: responseContent,
-        });
-
-        let newError = '';
-        if (parsedResponseContent[0]?.error) {
-          newError = parsedResponseContent[0].error;
-        }
-
-        updatedConversation.push({
-          role: 'user',
-          content: myResponse,
-        });
-
-        updatedConversation.push({
-          role: 'system',
-          response: parsedResponseContent[0]?.response,
-          suggestion: parsedResponseContent[0]?.suggestion,
-          error: newError,
-        });
-
-        setConversation([...updatedConversation]);
-      })
-      .catch(error => {
-        console.log(error?.message);
       })
       .finally(() => {
         setThinking(false);
@@ -306,12 +268,19 @@ function Main(): JSX.Element {
     setConversationCache([]);
   };
 
+  const navigation = useNavigation()
+
+  DeviceEventEmitter.addListener("new_filters", (eventData) => {
+    setFilters({ ... eventData })
+    onRefreshSession()
+  })
+
   return (
     //@ts-ignore
     <Box style={{flex: 1}}>
       <Appbar
         title="Peer Native"
-        onShowFilters={showDialog}
+        onShowFilters={/*showDialog*/ () => navigation.navigate('Settings')}
         onRefresh={onRefreshSession}
       />
 
@@ -320,16 +289,7 @@ function Main(): JSX.Element {
           style={
             hasSessionStarted ? styles.sessionStarted : styles.sessionAwaiting
           }>
-          {hasSessionStarted ? (
-            <Conversation conversation={conversation} />
-          ) : (
-            <Box style={{padding: 15}}>
-              <Text variant="bodyLarge" style={{color: 'rgb(96, 108, 129)'}}>
-                Welcome to Peer Native. Customize your peer's settings and start
-                instantly. Display filter settings here?
-              </Text>
-            </Box>
-          )}
+          <Conversation conversation={conversation} sessionStarted={hasSessionStarted} />
         </Box>
 
         <Divider />
@@ -340,20 +300,7 @@ function Main(): JSX.Element {
           onClearInput={clear}
           onSetInputVal={setTextInputVal}
         />
-        {/* here */}
       </Box>
-
-      <SafeAreaView />
-
-      <FiltersDialog
-        //@ts-ignore
-        setFilters={setFilters}
-        //@ts-ignore
-        filters={filters}
-        visible={filtersDialogIsVisible}
-        onDismiss={() => setFiltersDialogIsVisible(false)}
-        onSave={onSaveFilters}
-      />
     </Box>
   );
 }
@@ -366,9 +313,7 @@ const styles = StyleSheet.create({
   sessionAwaiting: {
     flex: 1,
     backgroundColor: 'rgb(248, 250 253)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    
   },
 });
 
