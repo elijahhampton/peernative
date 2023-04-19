@@ -7,7 +7,7 @@ import {Button, Divider} from 'react-native-paper';
 import {DeviceEventEmitter} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Globe from '../../components/Globe';
-import RotatingLanguages from '../../components/RotatingLangauges';
+import RotatingLanguages from '../../components/RotatingLanguages';
 
 interface IFilterState {
   desired_training_level: string;
