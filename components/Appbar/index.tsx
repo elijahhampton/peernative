@@ -15,7 +15,7 @@ function Appbar(props: IAppbarProps) {
 
   return (
     <PaperAppbar.Header style={styles.header}>
-      <PaperAppbar.Action onPress={onShowFilters} icon="filter-variant" />
+      <PaperAppbar.Action onPress={onShowFilters} icon="cog-outline" />
       <PaperAppbar.Content
         title={
           <LinearGradientText

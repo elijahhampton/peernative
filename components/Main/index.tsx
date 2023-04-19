@@ -111,9 +111,6 @@ function Main(): JSX.Element {
       training_level,
     })
       .then((axiosResponse: any) => {
-        console.log(axiosResponse?.timestamp);
-        console.log('@@@@@@@@@@@@');
-
         let updatedChatGptCache = JSON.parse(JSON.stringify(conversationCache));
         let updatedConversation = JSON.parse(JSON.stringify(conversation));
 
@@ -123,7 +120,6 @@ function Main(): JSX.Element {
           timestamp,
         } = axiosResponse;
 
-        console.log(timestamp);
         updatedChatGptCache.push({role: 'system', content: originalPrompt});
 
         const parsedContent = JSON.parse(content)[0];
@@ -290,6 +286,7 @@ function Main(): JSX.Element {
             hasSessionStarted ? styles.sessionStarted : styles.sessionAwaiting
           }>
           <Conversation
+            filters={filters}
             conversation={conversation}
             sessionStarted={hasSessionStarted}
           />

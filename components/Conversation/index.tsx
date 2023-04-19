@@ -2,17 +2,26 @@ import {memo, useEffect, useRef} from 'react';
 import {ScrollView, Text, StyleSheet, View} from 'react-native';
 import {Box, Stack, HStack} from 'native-base';
 import Icon from 'react-native-vector-icons/Ionicons';
-import LoadingDots from 'react-native-loading-dots';
 import moment from 'moment';
 import React from 'react';
 import { Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import ChatInfoPanel from '../ChatInfoPanel';
+import LoadingDots from '../LoadingDots';
 
 Icon.loadFont();
+
+interface IFilterState {
+  desired_training_level: string;
+  language: string;
+  topic: string;
+  target_language: string;
+}
 
 interface IConversationProps {
   conversation: Array<any>;
   sessionStarted: boolean;
+  filters: IFilterState;
 }
 
 interface IResponse {
@@ -24,7 +33,7 @@ type PeerResponse = IResponse & {suggestion: string; error?: string; loading: bo
 type UserResponse = IResponse;
 
 function Conversation(props: IConversationProps) {
-  const {conversation, sessionStarted} = props;
+  const {conversation, sessionStarted, filters} = props;
 
   const scrollViewRef = useRef();
 
@@ -32,6 +41,7 @@ function Conversation(props: IConversationProps) {
 
   return (
     <Box style={{flex: 1}}>
+      <ChatInfoPanel filters={filters} />
       <ScrollView
         ref={scrollViewRef}
         contentContainerStyle={{
@@ -40,8 +50,12 @@ function Conversation(props: IConversationProps) {
           paddingLeft: 10,
           paddingRight: 10
         }}
-        onContentSizeChange={() =>
-          scrollViewRef.current.scrollToEnd({animated: true})
+        onContentSizeChange={() => {
+          if (scrollViewRef.current) {
+            scrollViewRef.current.scrollToEnd({animated: true})
+          }
+        }
+
         }>
         <Stack space={5} style={{width: '100%' }}>
           {sessionStarted && conversation.map((response: IResponse) => {
@@ -112,7 +126,7 @@ const renderPeerResponse = (response: PeerResponse): JSX.Element => {
               maxWidth: 250,
               borderRadius: 10,
             }}>
-            <LoadingDots size={12} colors={['#2196F3', '#90CAF9', '#E1F5FE', '#EEE']} />
+          <LoadingDots />
           </Box>
         </Box>
       </>
@@ -189,7 +203,7 @@ const renderSystemResponse = (response: IResponse): JSX.Element => {
               maxWidth: 250,
               borderRadius: 10,
             }}>
-            <LoadingDots size={12} />
+           <LoadingDots />
           </Box>
         </Box>
       </>

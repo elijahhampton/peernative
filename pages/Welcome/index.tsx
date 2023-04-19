@@ -1,11 +1,13 @@
-import {Stack} from 'native-base';
+import {Stack, Box} from 'native-base';
 import React, {useState, useEffect} from 'react';
-import {View} from 'react-native';
+import {View, Text, SafeAreaView} from 'react-native';
 import DropDown from 'react-native-paper-dropdown';
 import {TOPICS, LANGUAGE_LEVELS, LANGUAGES} from '../../constants/filters';
-import {Button} from 'react-native-paper';
+import {Button, Divider} from 'react-native-paper';
 import {DeviceEventEmitter} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
+import Globe from '../../components/Globe';
+import RotatingLanguages from '../../components/RotatingLangauges';
 
 interface IFilterState {
   desired_training_level: string;
@@ -15,7 +17,7 @@ interface IFilterState {
 }
 
 function Welcome() {
-    const navigation = useNavigation()
+  const navigation = useNavigation();
   const [filters, setFilters] = useState<IFilterState>({
     desired_training_level: 'B2',
     language: 'English',
@@ -32,7 +34,7 @@ function Welcome() {
 
   const onGetStarted = () => {
     DeviceEventEmitter.emit('new_filters', filters);
-    navigation.navigate('Home')
+    navigation.navigate('Home');
   };
 
   useEffect(() => {
@@ -42,135 +44,57 @@ function Welcome() {
   }, []);
 
   return (
-    <View style={{flex: 1}}>
-      <View
+    <SafeAreaView
+      style={{
+        flex: 1,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#FFFFFF',
+      }}>
+      <Stack
+        space={10}
         style={{
           flex: 1,
-          backgroundColor:
-            'linear-gradient(90deg, rgba(123,192,246,1) 0%, rgba(255,255,255,1) 100%)',
-        }}></View>
-
-      <View
-        style={{
-          paddingTop: 15,
-          paddingBottom: 15,
-          flex: 1,
-          backgroundColor: '#FFF',
+          paddingTop: 150,
+          backgroundColor: '#FFFFFF',
+          display: 'flex',
+          alignItems: 'center',
         }}>
-        <Stack space={8} style={{paddingLeft: 20, paddingRight: 20}}>
-          <DropDown
-            label={'Topic'}
-            mode={'outlined'}
-            visible={dropdownVisibilities['topic']}
-            showDropDown={() => {
-              setDropdownVisibilities({
-                ...dropdownVisibilities,
-                topic: true,
-              });
-            }}
-            onDismiss={() => {
-              setDropdownVisibilities({
-                ...dropdownVisibilities,
-                topic: false,
-              });
-            }}
-            value={filters['topic']}
-            setValue={value => {
-              setFilters({
-                ...filters,
-                topic: value,
-              });
-            }}
-            list={TOPICS}
-          />
+        <Globe />
+        <View style={{display: 'flex', alignItems: 'center'}}>
+          <Text style={{paddingBottom: 10, fontSize: 20, fontWeight: '600'}}>
+            Welcome to Peer Native
+          </Text>
+          <RotatingLanguages />
+        </View>
 
-          <DropDown
-            label={'Training Target'}
-            mode={'outlined'}
-            visible={dropdownVisibilities['desired_training_level']}
-            showDropDown={() =>
-              setDropdownVisibilities({
-                ...dropdownVisibilities,
-                desired_training_level: true,
-              })
-            }
-            onDismiss={() =>
-              setDropdownVisibilities({
-                ...dropdownVisibilities,
-                desired_training_level: false,
-              })
-            }
-            value={filters['desired_training_level']}
-            setValue={value =>
-              setFilters({
-                ...filters,
-                desired_training_level: value,
-              })
-            }
-            list={LANGUAGE_LEVELS}
-          />
+        <Box>
+          <Divider />
+          <Text
+            style={{
+              fontSize: 12,
+              color: '#757575',
+              fontStyle: 'italic',
+              letterSpacing: 0.5,
+              lineHeight: 16,
+              padding: 20,
+              textAlign: 'center',
+              textAlignVertical: 'center',
+            }}>
+            Peer Native works in a similar way to other messaging applications
+            in the way you can chat with the AI as you talk with your friends.
+          </Text>
+        </Box>
+      </Stack>
 
-          <DropDown
-            label={'Language'}
-            mode={'outlined'}
-            visible={dropdownVisibilities['language']}
-            showDropDown={() =>
-              setDropdownVisibilities({
-                ...dropdownVisibilities,
-                language: true,
-              })
-            }
-            onDismiss={() =>
-              setDropdownVisibilities({
-                ...dropdownVisibilities,
-                language: false,
-              })
-            }
-            value={filters['language']}
-            setValue={value =>
-              setFilters({
-                ...filters,
-                language: value,
-              })
-            }
-            list={LANGUAGES}
-          />
-
-          <DropDown
-            label={'Target Language'}
-            mode={'outlined'}
-            visible={dropdownVisibilities['target_language']}
-            showDropDown={() =>
-              setDropdownVisibilities({
-                ...dropdownVisibilities,
-                target_language: true,
-              })
-            }
-            onDismiss={() =>
-              setDropdownVisibilities({
-                ...dropdownVisibilities,
-                target_language: false,
-              })
-            }
-            value={filters['target_language']}
-            setValue={value =>
-              setFilters({
-                ...filters,
-                target_language: value,
-              })
-            }
-            list={LANGUAGES}
-          />
-        </Stack>
-
-        <Button
-          onPress={onGetStarted}
-          style={{margin: 20, padding: 3}}
-          mode="contained">
-          Get Started
-        </Button>
-      </View>
-    </View>
+      <Button
+        onPress={onGetStarted}
+        style={{margin: 20, padding: 3, width: '90%'}}
+        mode="contained">
+        Have a conversation with Peer
+      </Button>
+    </SafeAreaView>
   );
 }
 

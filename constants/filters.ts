@@ -17,4 +17,24 @@ export const TOPICS = [
     label: 'Politics',
     value: 'politics',
   },
+  {
+    label: 'Personal Life',
+    value: 'personal life',
+  },
+  {
+    label: 'Sports',
+    value: 'sports',
+  },
+  {
+    label: 'Fashion',
+    value: 'fashion',
+  },
+  {
+    label: 'Technology',
+    value: 'technology',
+  },
+  {
+    label: 'Books',
+    value: 'books',
+  },
 ];

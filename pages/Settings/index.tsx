@@ -1,59 +1,71 @@
-import { useState, useEffect } from 'react'
+import {useState, useEffect} from 'react';
 import {SafeAreaView, StyleSheet, View} from 'react-native';
 import {Appbar, Button} from 'react-native-paper';
 import {Box, Stack} from 'native-base';
-import { LANGUAGES, LANGUAGE_LEVELS, TOPICS } from '../../constants/filters';
+import {LANGUAGES, LANGUAGE_LEVELS, TOPICS} from '../../constants/filters';
 import React from 'react';
 import DropDown from 'react-native-paper-dropdown';
-import {DeviceEventEmitter} from "react-native"
+import {DeviceEventEmitter} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 
-interface ISettingsProps {
-  navigation: any;
-}
+interface ISettingsProps {}
 
 interface IFilterState {
-    desired_training_level: string;
-    language: string;
-    topic: string;
-    target_language: string;
-  }
+  desired_training_level: string;
+  language: string;
+  topic: string;
+  target_language: string;
+}
 
-function Settings({navigation}: ISettingsProps) {
-    const [filters, setFilters] = useState<IFilterState>({
-        desired_training_level: 'B2',
-        language: 'English',
-        target_language: 'Spanish',
-        topic: TOPICS[0].value,
-      });
+function Settings(props: ISettingsProps) {
+  const navigation = useNavigation();
+  const [filters, setFilters] = useState<IFilterState>({
+    desired_training_level: 'B2',
+    language: 'English',
+    target_language: 'Spanish',
+    topic: TOPICS[0].value,
+  });
 
-    const [dropdownVisibilities, setDropdownVisibilities] = useState({
-        desired_training_level: false,
-        language: false,
-        target_language: false,
-        topic: false,
-      });
+  const [dropdownVisibilities, setDropdownVisibilities] = useState({
+    desired_training_level: false,
+    language: false,
+    target_language: false,
+    topic: false,
+  });
 
-      const onSaveSessionFilters = () => {
-        DeviceEventEmitter.emit("new_filters", filters);
-      }
+  const onSaveSessionFilters = () => {
+    DeviceEventEmitter.emit('new_filters', filters);
+    navigation.goBack();
+  };
 
-      useEffect(() => {
-        return () => {
-            DeviceEventEmitter.removeAllListeners("new_filters")
-          };
-        }, []);
-
+  useEffect(() => {
+    return () => {
+      DeviceEventEmitter.removeAllListeners('new_filters');
+    };
+  }, []);
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: 'rgb(248, 250 253)'}}>
       <Appbar style={styles.header}>
         <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <Appbar.Content title="Settings" titleStyle={styles.title} style={styles.content} />
+        <Appbar.Content
+          title="Settings"
+          titleStyle={styles.title}
+          style={styles.content}
+        />
       </Appbar>
-      <View style={{ flex: 1, display: 'flex', justifyContent: "space-between"}}>
-      <Stack space={8} style={{ paddingLeft: 20, paddingRight: 20 }}>
-        
+      <View style={{flex: 1, display: 'flex', justifyContent: 'space-between'}}>
+        <Stack space={8} style={{paddingLeft: 20, paddingRight: 20}}>
           <DropDown
+            dropDownItemStyle={{
+              backgroundColor: '#FFFFFF',
+            }}
+            dropDownItemSelectedStyle={{
+              backgroundColor: '#FFFFFF',
+            }}
+            dropDownStyle={{
+              backgroundColor: '#FFFFFF',
+            }}
             label={'Topic'}
             mode={'outlined'}
             visible={dropdownVisibilities['topic']}
@@ -80,6 +92,16 @@ function Settings({navigation}: ISettingsProps) {
           />
 
           <DropDown
+            dropDownItemStyle={{
+              backgroundColor: '#FFFFFF',
+            }}
+            dropDownItemSelectedStyle={{
+              backgroundColor: '#FFFFFF',
+            }}
+            dropDownStyle={{
+              backgroundColor: '#FFFFFF',
+            }}
+            style={{backgroundColor: '#FFFFFF'}}
             label={'Training Target'}
             mode={'outlined'}
             visible={dropdownVisibilities['desired_training_level']}
@@ -106,6 +128,15 @@ function Settings({navigation}: ISettingsProps) {
           />
 
           <DropDown
+            dropDownItemStyle={{
+              backgroundColor: '#FFFFFF',
+            }}
+            dropDownItemSelectedStyle={{
+              backgroundColor: '#FFFFFF',
+            }}
+            dropDownStyle={{
+              backgroundColor: '#FFFFFF',
+            }}
             label={'Language'}
             mode={'outlined'}
             visible={dropdownVisibilities['language']}
@@ -132,6 +163,15 @@ function Settings({navigation}: ISettingsProps) {
           />
 
           <DropDown
+            dropDownItemStyle={{
+              backgroundColor: '#FFFFFF',
+            }}
+            dropDownItemSelectedStyle={{
+              backgroundColor: '#FFFFFF',
+            }}
+            dropDownStyle={{
+              backgroundColor: '#FFFFFF',
+            }}
             label={'Target Language'}
             mode={'outlined'}
             visible={dropdownVisibilities['target_language']}
@@ -158,19 +198,21 @@ function Settings({navigation}: ISettingsProps) {
           />
         </Stack>
 
-        <Button onPress={onSaveSessionFilters} mode='contained' style={{ marginBottom: 20, width: '90%', alignSelf: 'center'}}>
-            Save
+        <Button
+          onPress={onSaveSessionFilters}
+          mode="contained"
+          style={{marginBottom: 20, width: '90%', alignSelf: 'center'}}>
+          Save
         </Button>
-        </View>
-
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-    content: {
-        alignSelf: 'center'
-    },
+  content: {
+    alignSelf: 'center',
+  },
   title: {
     fontSize: 20,
     paddingTop: 10,
