@@ -3,8 +3,8 @@ import {Box, Stack, HStack, Input} from 'native-base';
 import {Surface, IconButton, TouchableRipple} from 'react-native-paper';
 import Voice from '@react-native-community/voice';
 import {useState, useEffect} from 'react';
-import { BlurView } from "@react-native-community/blur";
-
+import {BlurView} from '@react-native-community/blur';
+import Icon from 'react-native-vector-icons/Ionicons';
 //TODO: Keep microphone icon visible instead of send icon if user is speaking
 
 interface IInputControllerProps {
@@ -20,8 +20,7 @@ function InputController(props: IInputControllerProps) {
 
   const [speaking, setSpeaking] = useState<boolean>(false);
 
-  const speechStartHandler = e => {
-  };
+  const speechStartHandler = e => {};
 
   const speechEndHandler = e => {
     setSpeaking(false);
@@ -37,8 +36,7 @@ function InputController(props: IInputControllerProps) {
 
     try {
       await Voice.start('en-Us');
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -55,8 +53,7 @@ function InputController(props: IInputControllerProps) {
     try {
       await Voice.stop();
       setSpeaking(false);
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   return (
@@ -66,31 +63,40 @@ function InputController(props: IInputControllerProps) {
       style={{width: '100%'}}>
       <Box
         style={{
-          padding: 10,
-          marginBottom: 20,
+          // padding: 10
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
           width: '100%',
+          
         }}>
-        <HStack space={0} alignItems="center" style={styles.inputContainer}>
-        <BlurView style={styles.blur} blurType='light' tint='#fff' intensity={10} />
+        <HStack space={2} alignItems="center" style={styles.inputContainer}>
+          <BlurView
+            style={styles.blur}
+            blurType="light"
+            tint="#fff"
+            intensity={10}
+          />
           <Surface
             elevation={0}
             style={{
               width: '100%',
-              borderWidth: 1,
-              borderColor: '#ddd',
-margin: 10,
-              padding: 3,
+         //     borderWidth: 1,
+          //    borderColor: '#ddd',
+              margin: 10,
               flex: 1,
               borderRadius: 20,
+  
             }}>
             <Input
               value={inputVal}
               w="100%"
               onChangeText={onChange}
-              style={{width: '100%'}}
+              style={{
+                width: '100%',
+                backgroundColor: 'rgb(240, 240, 240)',
+                borderRadius: 20,
+              }}
               variant="unstyled"
               placeholder="Start a conversation"
             />
@@ -101,23 +107,19 @@ margin: 10,
               icon="send"
               iconColor="#FFFFFF"
               size={17}
-              style={{paddingLeft: 3, marginRight: 15, backgroundColor: '#1E88E5'}}
+              style={{backgroundColor: '#1E88E5'}}
               onPress={onSubmit}
             />
           ) : (
-            <>
-    
-                <IconButton
-                  onPress={
-                    speaking ? () => stopRecording() : () => startRecording()
-                  }
-                  style={{marginLeft: 0, marginRight: 15}}
-                  iconColor={speaking ? '#2196F3' : 'black'}
-                  icon="microphone"
-                  size={20}
-                />
-        
-            </>
+            <Icon
+              name="ios-mic"
+              onPress={
+                speaking ? () => stopRecording() : () => startRecording()
+              }
+              color={speaking ? '#2196F3' : 'black'}
+              size={20}
+              style={{ backgroundColor: 'transparent' }}
+            />
           )}
         </HStack>
       </Box>
@@ -128,7 +130,7 @@ margin: 10,
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#FFF',
     padding: 10,
   },
   messageContainer: {
@@ -140,12 +142,16 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 1,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    paddingLeft: 0,
+    paddingRight: 20
   },
   surface: {
     borderRadius: 10,
-    backgroundColor: '#fff',
+    backgroundColor: '#FFF',
     elevation: 10,
-    marginBottom: 10,
     overflow: 'hidden',
   },
   message: {
@@ -155,14 +161,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   input: {
-    backgroundColor: 'transparent',
+    backgroundColor: '#FFF',
     borderRadius: 10,
     borderWidth: 1,
     borderColor: '#ccc',
     padding: 10,
   },
   blur: {
-    padding: 20,
+    //padding: 20,
     position: 'absolute',
     top: 0,
     left: 0,
@@ -171,4 +177,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default InputController
+export default InputController;

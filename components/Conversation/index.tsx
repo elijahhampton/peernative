@@ -41,11 +41,10 @@ function Conversation(props: IConversationProps) {
 
   return (
     <Box style={{flex: 1}}>
-      <ChatInfoPanel filters={filters} />
       <ScrollView
         ref={scrollViewRef}
         contentContainerStyle={{
-          backgroundColor: 'rgb(249, 251, 254)',
+          backgroundColor: '#FFF',
           paddingBottom: 40,
           paddingLeft: 10,
           paddingRight: 10
@@ -83,6 +82,7 @@ const renderResponse = (response: IResponse): JSX.Element => {
 const renderUserResponse = (response: UserResponse): JSX.Element => {
   return (
     <Box
+    key={response?.response}
       style={{
         width: '100%',
         display: 'flex',
@@ -113,6 +113,7 @@ const renderPeerResponse = (response: PeerResponse): JSX.Element => {
     return (
       <>
         <Box
+            key={response?.response}
           style={{
             width: '100%',
             display: 'flex',
@@ -136,6 +137,7 @@ const renderPeerResponse = (response: PeerResponse): JSX.Element => {
   return (
     <>
       <Box
+          key={response?.response}
         style={{
           width: '100%',
           display: 'flex',
@@ -190,6 +192,7 @@ const renderSystemResponse = (response: IResponse): JSX.Element => {
     return (
       <>
         <Box
+            key={response?.response}
           style={{
             width: '100%',
             display: 'flex',
@@ -212,6 +215,7 @@ const renderSystemResponse = (response: IResponse): JSX.Element => {
   return (
     <>
       <Box
+          key={response?.response}
         style={{
           width: '100%',
           display: 'flex',
@@ -279,11 +283,11 @@ const renderSystemResponse = (response: IResponse): JSX.Element => {
 const styles = StyleSheet.create({
   sessionStarted: {
     flex: 1,
-    backgroundColor: 'rgb(248, 250 253)',
+    backgroundColor: '#FFF',
   },
   sessionAwaiting: {
     flex: 1,
-    backgroundColor: 'rgb(248, 250 253)',
+    backgroundColor: '#FFF',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

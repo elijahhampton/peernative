@@ -1,7 +1,7 @@
 import {useState, useEffect} from 'react';
 import {SafeAreaView, StyleSheet, View} from 'react-native';
 import {Appbar, Button} from 'react-native-paper';
-import {Box, Stack} from 'native-base';
+import {Box, Stack, HStack} from 'native-base';
 import {LANGUAGES, LANGUAGE_LEVELS, TOPICS} from '../../constants/filters';
 import React from 'react';
 import DropDown from 'react-native-paper-dropdown';
@@ -45,7 +45,7 @@ function Settings(props: ISettingsProps) {
   }, []);
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: 'rgb(248, 250 253)'}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: '#FFF'}}>
       <Appbar style={styles.header}>
         <Appbar.BackAction onPress={() => navigation.goBack()} />
         <Appbar.Content
@@ -55,8 +55,50 @@ function Settings(props: ISettingsProps) {
         />
       </Appbar>
       <View style={{flex: 1, display: 'flex', justifyContent: 'space-between'}}>
+        <View style={{padding: 10}}>
         <Stack space={8} style={{paddingLeft: 20, paddingRight: 20}}>
-          <DropDown
+          <HStack space={4} alignItems='center' justifyContent='space-between'>
+            <Box style={{ flex: 1 }}>
+            <DropDown
+  
+  dropDownItemStyle={{
+    backgroundColor: '#FFFFFF',
+  }}
+  dropDownItemSelectedStyle={{
+    backgroundColor: '#FFFFFF',
+  }}
+  dropDownStyle={{
+
+    backgroundColor: '#FFFFFF',
+  }}
+  label={'Language'}
+  mode={'outlined'}
+  visible={dropdownVisibilities['language']}
+  showDropDown={() =>
+    setDropdownVisibilities({
+      ...dropdownVisibilities,
+      language: true,
+    })
+  }
+  onDismiss={() =>
+    setDropdownVisibilities({
+      ...dropdownVisibilities,
+      language: false,
+    })
+  }
+  value={filters['language']}
+  setValue={value =>
+    setFilters({
+      ...filters,
+      language: value,
+    })
+  }
+  list={LANGUAGES}
+/>
+            </Box>
+
+            <Box style={{ flex: 1 }}>
+            <DropDown
             dropDownItemStyle={{
               backgroundColor: '#FFFFFF',
             }}
@@ -66,30 +108,35 @@ function Settings(props: ISettingsProps) {
             dropDownStyle={{
               backgroundColor: '#FFFFFF',
             }}
-            label={'Topic'}
+            label={'Target Language'}
             mode={'outlined'}
-            visible={dropdownVisibilities['topic']}
-            showDropDown={() => {
+            visible={dropdownVisibilities['target_language']}
+            showDropDown={() =>
               setDropdownVisibilities({
                 ...dropdownVisibilities,
-                topic: true,
-              });
-            }}
-            onDismiss={() => {
+                target_language: true,
+              })
+            }
+            onDismiss={() =>
               setDropdownVisibilities({
                 ...dropdownVisibilities,
-                topic: false,
-              });
-            }}
-            value={filters['topic']}
-            setValue={value => {
+                target_language: false,
+              })
+            }
+            value={filters['target_language']}
+            setValue={value =>
               setFilters({
                 ...filters,
-                topic: value,
-              });
-            }}
-            list={TOPICS}
+                target_language: value,
+              })
+            }
+            list={LANGUAGES}
           />
+            </Box>
+         
+
+
+          </HStack>
 
           <DropDown
             dropDownItemStyle={{
@@ -127,7 +174,8 @@ function Settings(props: ISettingsProps) {
             list={LANGUAGE_LEVELS}
           />
 
-          <DropDown
+        
+<DropDown
             dropDownItemStyle={{
               backgroundColor: '#FFFFFF',
             }}
@@ -137,66 +185,33 @@ function Settings(props: ISettingsProps) {
             dropDownStyle={{
               backgroundColor: '#FFFFFF',
             }}
-            label={'Language'}
+            label={'Topic'}
             mode={'outlined'}
-            visible={dropdownVisibilities['language']}
-            showDropDown={() =>
+            visible={dropdownVisibilities['topic']}
+            showDropDown={() => {
               setDropdownVisibilities({
                 ...dropdownVisibilities,
-                language: true,
-              })
-            }
-            onDismiss={() =>
+                topic: true,
+              });
+            }}
+            onDismiss={() => {
               setDropdownVisibilities({
                 ...dropdownVisibilities,
-                language: false,
-              })
-            }
-            value={filters['language']}
-            setValue={value =>
+                topic: false,
+              });
+            }}
+            value={filters['topic']}
+            setValue={value => {
               setFilters({
                 ...filters,
-                language: value,
-              })
-            }
-            list={LANGUAGES}
+                topic: value,
+              });
+            }}
+            list={TOPICS}
           />
-
-          <DropDown
-            dropDownItemStyle={{
-              backgroundColor: '#FFFFFF',
-            }}
-            dropDownItemSelectedStyle={{
-              backgroundColor: '#FFFFFF',
-            }}
-            dropDownStyle={{
-              backgroundColor: '#FFFFFF',
-            }}
-            label={'Target Language'}
-            mode={'outlined'}
-            visible={dropdownVisibilities['target_language']}
-            showDropDown={() =>
-              setDropdownVisibilities({
-                ...dropdownVisibilities,
-                target_language: true,
-              })
-            }
-            onDismiss={() =>
-              setDropdownVisibilities({
-                ...dropdownVisibilities,
-                target_language: false,
-              })
-            }
-            value={filters['target_language']}
-            setValue={value =>
-              setFilters({
-                ...filters,
-                target_language: value,
-              })
-            }
-            list={LANGUAGES}
-          />
+  
         </Stack>
+        </View>
 
         <Button
           onPress={onSaveSessionFilters}
@@ -212,6 +227,7 @@ function Settings(props: ISettingsProps) {
 const styles = StyleSheet.create({
   content: {
     alignSelf: 'center',
+    backgroundColor: '#FFF'
   },
   title: {
     fontSize: 20,
@@ -221,7 +237,7 @@ const styles = StyleSheet.create({
   },
   header: {
     display: 'flex',
-    backgroundColor: 'rgb(248, 250 253)',
+    backgroundColor: '#FFF',
   },
 });
 

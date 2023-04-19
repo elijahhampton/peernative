@@ -11,11 +11,12 @@ import {
   GestureResponderEvent,
   Alert,
   Dimensions,
+  Text,
 } from 'react-native';
 
 import {Divider} from 'react-native-paper';
 import {LinearGradientText} from 'react-native-linear-gradient-text';
-import {NativeBaseProvider, Box, HStack, Stack, Input} from 'native-base';
+import {NativeBaseProvider, Box, HStack, Stack, Input, Button} from 'native-base';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Voice from '@react-native-community/voice';
 import axios, {AxiosError, AxiosResponse} from 'axios';
@@ -30,7 +31,7 @@ import {
 import {TOPICS} from '../../constants/filters';
 import InputController from '../InputController';
 import FiltersDialog from '../FiltersDialog';
-import {useNavigation} from '@react-navigation/native';
+import {StackRouter, useNavigation} from '@react-navigation/native';
 import {DeviceEventEmitter} from 'react-native';
 
 Icon.loadFont();
@@ -273,9 +274,9 @@ function Main(): JSX.Element {
 
   return (
     //@ts-ignore
-    <Box style={{flex: 1}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: '#FFF'}}>
       <Appbar
-        title="Peer Native"
+        title="Peer"
         onShowFilters={/*showDialog*/ () => navigation.navigate('Settings')}
         onRefresh={onRefreshSession}
       />
@@ -285,11 +286,23 @@ function Main(): JSX.Element {
           style={
             hasSessionStarted ? styles.sessionStarted : styles.sessionAwaiting
           }>
-          <Conversation
-            filters={filters}
-            conversation={conversation}
-            sessionStarted={hasSessionStarted}
-          />
+            {
+              hasSessionStarted ?
+              <Conversation
+              filters={filters}
+              conversation={conversation}
+              sessionStarted={hasSessionStarted}
+            />
+              :
+              <View style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Stack space={5} style={{  borderRadius: 8, backgroundColor: '#f2f2f2', padding: 30 }}>
+                  <Text style={{ color: "#212121" }}>Get started with peer by sending a message or changing the applied settings.</Text>
+                  <Button onPress={() => navigation.navigate('Settings')} style={{ backgroundColor: '#42A5F5' }}>Change settings</Button>
+              </Stack>
+              </View>
+    
+            }
+
         </Box>
 
         <Divider />
@@ -301,18 +314,18 @@ function Main(): JSX.Element {
           onSetInputVal={setTextInputVal}
         />
       </Box>
-    </Box>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   sessionStarted: {
     flex: 1,
-    backgroundColor: 'rgb(248, 250 253)',
+    backgroundColor: '#FFF',
   },
   sessionAwaiting: {
     flex: 1,
-    backgroundColor: 'rgb(248, 250 253)',
+    backgroundColor: '#FFF',
   },
 });
 

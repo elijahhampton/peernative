@@ -2,6 +2,7 @@ import {memo} from 'react';
 import {Appbar as PaperAppbar, Text} from 'react-native-paper';
 import {LinearGradientText} from 'react-native-linear-gradient-text';
 import {StyleSheet, View} from 'react-native';
+import { HStack } from 'native-base';
 
 
 interface IAppbarProps {
@@ -14,10 +15,8 @@ function Appbar(props: IAppbarProps) {
   const {onShowFilters, title, onRefresh} = props;
 
   return (
-    <PaperAppbar.Header style={styles.header}>
-      <PaperAppbar.Action onPress={onShowFilters} icon="cog-outline" />
-      <PaperAppbar.Content
-        title={
+    <HStack style={styles.header}>
+   
           <LinearGradientText
             colors={['#1E88E5', '#81D4FA', '#1E88E5', '#81D4FA']}
             text={title}
@@ -25,23 +24,33 @@ function Appbar(props: IAppbarProps) {
             end={{x: 1, y: 1}}
             textStyle={styles.linearGradientTextStyles}
           />
-        }
-      />
+      
 
-      <PaperAppbar.Action icon="refresh" onPress={onRefresh} />
-    </PaperAppbar.Header>
+<HStack>
+<PaperAppbar.Action onPress={onShowFilters} size={22} icon="cog-outline" />
+
+
+<PaperAppbar.Action icon="refresh" size={22} onPress={onRefresh} />
+</HStack>
+
+    </HStack>
   );
 }
 
 const styles = StyleSheet.create({
   linearGradientTextStyles: {
-    fontSize: 20,
+    fontSize: 25,
     paddingTop: 10,
     paddingBottom: 10,
-   //fontWeight: '200',
+   fontWeight: '600',
   },
   header: {
-    backgroundColor: 'rgb(248, 250 253)'
+    paddingLeft: 20,
+    margin: 0,
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent :'space-between',
   },
 });
 
