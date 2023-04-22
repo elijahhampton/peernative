@@ -1,27 +1,16 @@
-import React, {useState, useEffect, useRef} from 'react';
-import type {PropsWithChildren} from 'react';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
-  KeyboardAvoidingView,
-  useColorScheme,
   View,
-  GestureResponderEvent,
-  Alert,
-  Dimensions,
   Text,
 } from 'react-native';
 
-import {Divider} from 'react-native-paper';
-import {LinearGradientText} from 'react-native-linear-gradient-text';
-import {NativeBaseProvider, Box, HStack, Stack, Input, Button} from 'native-base';
+import {Divider, Button} from 'react-native-paper';
+import {Box, Stack} from 'native-base';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Voice from '@react-native-community/voice';
-import axios, {AxiosError, AxiosResponse} from 'axios';
+import {AxiosError} from 'axios';
 
-import {commonAxiosConfig} from '../../constants/api';
 import Appbar from '../Appbar';
 import Conversation from '../Conversation';
 import {
@@ -30,8 +19,7 @@ import {
 } from '../../hooks/mutations';
 import {TOPICS} from '../../constants/filters';
 import InputController from '../InputController';
-import FiltersDialog from '../FiltersDialog';
-import {StackRouter, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {DeviceEventEmitter} from 'react-native';
 
 Icon.loadFont();
@@ -57,30 +45,16 @@ function Main(): JSX.Element {
     topic: TOPICS[0].value,
   });
 
-  const [filtersDialogIsVisible, setFiltersDialogIsVisible] =
-    useState<boolean>(false);
-
-  const showDialog = () => {
-    setFiltersDialogIsVisible(true);
-  };
-
-  const hideDialog = () => setFiltersDialogIsVisible(false);
-
   const clear = () => {
     setTextInputVal('');
   };
 
-  const [thinking, setThinking] = useState<boolean>(false);
-
   const {
-    isLoading,
-    error,
-    isSuccess,
-    mutate: onPrompt,
+    isLoading: isLoadingPromptGreeting,
     mutateAsync: onPromptAsync,
   } = useSendGreetingWithTargets();
   const {
-    data: gptResponse,
+    isLoading: isLoadingGptResponse,
     mutate: onRespond,
     mutateAsync: onRespondAsync,
   } = useSendResponse();
@@ -162,13 +136,12 @@ function Main(): JSX.Element {
       {role: 'assistant', content: '', isLoading: true},
     ]);
 
-    setThinking(true);
-
     onRespondAsync({
       response: myResponse,
       pastConversation: conversationCache,
     })
       .then((axiosResponse: any) => {
+        console.log(axiosResponse)
         const gptTimestamp = axiosResponse?.timestamp;
         const replyResponse = axiosResponse?.replyResponse;
         const responseContent = String(replyResponse.content).replace('.', '');
@@ -209,9 +182,6 @@ function Main(): JSX.Element {
       .catch((error: AxiosError) => {
         console.log(error?.message);
       })
-      .finally(() => {
-        setThinking(false);
-      });
   };
 
   const updateConversationFromUser = async () => {
@@ -274,35 +244,78 @@ function Main(): JSX.Element {
 
   return (
     //@ts-ignore
-    <SafeAreaView style={{flex: 1, backgroundColor: '#FFF'}}>
+    <SafeAreaView style={styles.container}>
       <Appbar
         title="Peer"
-        onShowFilters={/*showDialog*/ () => navigation.navigate('Settings')}
+        onShowFilters={() => navigation.navigate('Settings')}
         onRefresh={onRefreshSession}
       />
+      <Divider />
 
-      <Box style={{flex: 1}}>
+      <Box style={styles.container}>
         <Box
           style={
             hasSessionStarted ? styles.sessionStarted : styles.sessionAwaiting
           }>
-            {
-              hasSessionStarted ?
-              <Conversation
+          {hasSessionStarted ? (
+            <Conversation
               filters={filters}
               conversation={conversation}
               sessionStarted={hasSessionStarted}
             />
-              :
-              <View style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Stack space={5} style={{  borderRadius: 8, backgroundColor: '#f2f2f2', padding: 30 }}>
-                  <Text style={{ color: "#212121" }}>Get started with peer by sending a message or changing the applied settings.</Text>
-                  <Button onPress={() => navigation.navigate('Settings')} style={{ backgroundColor: '#42A5F5' }}>Change settings</Button>
-              </Stack>
-              </View>
-    
-            }
+          ) : (
+            <View style={styles.sessionAwaitingContainer}>
+              <Stack space={5} style={styles.directionalContainer}>
+                <Stack space={3} style={styles.directionalTextContainer}>
+                  <Button
+                    mode="text"
+                    onPress={() => navigation.navigate('Settings')}
+                    style={{}}>
+                    Configure your settings ⚙️
+                  </Button>
+                </Stack>
 
+                <Stack space={3} style={styles.directionalTextContainer}>
+                  <Text style={styles.directionalTextTitle}>
+                    Send your first message 💬
+                  </Text>
+                  <Text style={styles.directionalText}>
+                    Choose your language, target language, target level and
+                    topic
+                  </Text>
+                  <Stack space={1}>
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        textAlign: 'center',
+                        color: 'rgb(82, 87, 116)',
+                      }}>
+                      Note: Your language is set to English.
+                    </Text>
+
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        textAlign: 'center',
+                        color: 'rgb(82, 87, 116)',
+                      }}>
+                      Note: Your target language is set to Spanish.
+                    </Text>
+                  </Stack>
+                </Stack>
+
+                <Stack space={3} style={styles.directionalTextContainer}>
+                  <Text style={styles.directionalTextTitle}>
+                    Enjoy conversation with peer 🧠
+                  </Text>
+                  <Text style={styles.directionalText}>
+                    Enagage in simple discussion or complex topics about the
+                    universe 🌎
+                  </Text>
+                </Stack>
+              </Stack>
+            </View>
+          )}
         </Box>
 
         <Divider />
@@ -319,6 +332,10 @@ function Main(): JSX.Element {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFF',
+  },
   sessionStarted: {
     flex: 1,
     backgroundColor: '#FFF',
@@ -326,6 +343,34 @@ const styles = StyleSheet.create({
   sessionAwaiting: {
     flex: 1,
     backgroundColor: '#FFF',
+  },
+  sessionAwaitingContainer: {
+    width: '100%',
+    flex: 1,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  directionalTextContainer: {
+    borderRadius: 5,
+    width: '100%',
+    backgroundColor: '#FFF',
+    padding: 15,
+  },
+  directionalText: {
+    textAlign: 'center',
+    color: 'rgb(82, 87, 116)',
+  },
+  directionalTextTitle: {
+    textAlign: 'center',
+    color: '#212121',
+    fontWeight: '600',
+  },
+  directionalContainer: {
+    width: '100%',
+    borderRadius: 8,
+    backgroundColor: '#f2f2f2',
+    padding: 20,
   },
 });
 

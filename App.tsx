@@ -2,7 +2,6 @@ import 'react-native-gesture-handler'
 
 import React from 'react';
 import {
-  MD3LightTheme as DefaultTheme,
   Provider as PaperProvider,
 } from 'react-native-paper';
 import {NativeBaseProvider} from 'native-base';
@@ -17,8 +16,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import Stack from './navigation'
 import Settings from './pages/Settings';
 import Welcome from './pages/Welcome';
-import PeerNativeInfoScreen from './pages/WelcomeInfo';
-import AppSettings from './pages/Settings/Settings';
+import About from './pages/About';
+
 Icon.loadFont();
 
 function App(): JSX.Element {
@@ -30,10 +29,10 @@ function App(): JSX.Element {
           <Stack.Navigator screenOptions={{
             headerShown: false
           }}>
-                        <Stack.Screen name="Welcome" component={Welcome} />
-
+            <Stack.Screen name="Welcome" component={Welcome} />
             <Stack.Screen name="Home" component={Main} />
             <Stack.Screen name="Settings" component={Settings} />
+            <Stack.Screen name="About" component={About} />
           </Stack.Navigator>
         </NavigationContainer>
         </QueryClientProvider>

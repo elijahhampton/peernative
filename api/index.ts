@@ -17,6 +17,8 @@ const sendGreetingWithTargets = async (greeting: string, user_language: string, 
         },
       })
 
+
+      console.log(axiosResponse)
     return axiosResponse.data
 }
 
@@ -32,6 +34,8 @@ const sendResponse = async (userResponse: string, pastConversation: Array<any>) 
           'Content-Type': 'application/json',
         },
       })
+
+      console.log(axiosResponse)
 
     return axiosResponse.data
 }

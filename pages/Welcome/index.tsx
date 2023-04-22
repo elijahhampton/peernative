@@ -6,8 +6,9 @@ import {TOPICS, LANGUAGE_LEVELS, LANGUAGES} from '../../constants/filters';
 import {Button, Divider} from 'react-native-paper';
 import {DeviceEventEmitter} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import Globe from '../../components/Globe';
-import RotatingLanguages from '../../components/RotatingLangauges';
+import Globe from '../../components/animations/PulsatingCircle';
+import RotatingLanguages from '../../components/animations/RotatingLanguages';
+import WaveAnimation from '../../components/animations/DigitalWaveform';
 
 interface IFilterState {
   desired_training_level: string;
@@ -61,7 +62,8 @@ function Welcome() {
           display: 'flex',
           alignItems: 'center',
         }}>
-        <Globe />
+        {/* <Globe /> */}
+        <WaveAnimation />
         <View style={{display: 'flex', alignItems: 'center'}}>
           <Text style={{paddingBottom: 10, fontSize: 20, fontWeight: '600'}}>
             Welcome to Peer Native

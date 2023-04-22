@@ -27,7 +27,7 @@ const createAnimatedCircleStyle = (
     return {
       transform: [{ scale: scale.value }],
     };
-  });
+  }, [scale.value]);
 };
 
 const PulsatingCircle: React.FC = () => {

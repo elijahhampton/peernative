@@ -1,11 +1,10 @@
-import {KeyboardAvoidingView, StyleSheet} from 'react-native';
+import {KeyboardAvoidingView, StyleSheet, Dimensions} from 'react-native';
 import {Box, Stack, HStack, Input} from 'native-base';
 import {Surface, IconButton, TouchableRipple} from 'react-native-paper';
 import Voice from '@react-native-community/voice';
 import {useState, useEffect} from 'react';
 import {BlurView} from '@react-native-community/blur';
 import Icon from 'react-native-vector-icons/Ionicons';
-//TODO: Keep microphone icon visible instead of send icon if user is speaking
 
 interface IInputControllerProps {
   inputVal: string;
@@ -15,23 +14,23 @@ interface IInputControllerProps {
   onSetInputVal: (text: string) => void;
 }
 
-function InputController(props: IInputControllerProps) {
+function InputController(props: IInputControllerProps): JSX.Element {
   const {inputVal, onSetInputVal, onChange, onSubmit, onClearInput} = props;
 
   const [speaking, setSpeaking] = useState<boolean>(false);
 
-  const speechStartHandler = e => {};
+  const speechStartHandler = (e: any): void => {};
 
-  const speechEndHandler = e => {
+  const speechEndHandler = (e: any): void => {
     setSpeaking(false);
   };
 
-  const speechResultsHandler = e => {
-    const text = e.value[0];
+  const speechResultsHandler = (e: any): void => {
+    const text: string = e.value[0];
     onSetInputVal(text);
   };
 
-  const startRecording = async () => {
+  const startRecording = async (): Promise<void> => {
     setSpeaking(true);
 
     try {
@@ -49,7 +48,7 @@ function InputController(props: IInputControllerProps) {
     };
   }, []);
 
-  const stopRecording = async () => {
+  const stopRecording = async (): Promise<void> => {
     try {
       await Voice.stop();
       setSpeaking(false);
@@ -59,15 +58,15 @@ function InputController(props: IInputControllerProps) {
   return (
     <KeyboardAvoidingView
       behavior="padding"
-      keyboardVerticalOffset={60}
-      style={{width: '100%'}}>
+      keyboardVerticalOffset={130}
+      style={styles.container}>
       <Box
         style={{
           // padding: 10
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
-          width: '100%',
+          width: Dimensions.get('screen').width
           
         }}>
         <HStack space={2} alignItems="center" style={styles.inputContainer}>
@@ -79,24 +78,13 @@ function InputController(props: IInputControllerProps) {
           />
           <Surface
             elevation={0}
-            style={{
-              width: '100%',
-         //     borderWidth: 1,
-          //    borderColor: '#ddd',
-              margin: 10,
-              flex: 1,
-              borderRadius: 20,
-  
-            }}>
+            style={styles.surface}>
             <Input
               value={inputVal}
               w="100%"
+              p={3}
               onChangeText={onChange}
-              style={{
-                width: '100%',
-                backgroundColor: 'rgb(240, 240, 240)',
-                borderRadius: 20,
-              }}
+              style={styles.input}
               variant="unstyled"
               placeholder="Start a conversation"
             />
@@ -107,7 +95,7 @@ function InputController(props: IInputControllerProps) {
               icon="send"
               iconColor="#FFFFFF"
               size={17}
-              style={{backgroundColor: '#1E88E5'}}
+              style={styles.sendButton}
               onPress={onSubmit}
             />
           ) : (
@@ -118,7 +106,7 @@ function InputController(props: IInputControllerProps) {
               }
               color={speaking ? '#2196F3' : 'black'}
               size={20}
-              style={{ backgroundColor: 'transparent' }}
+              style={styles.micIcon}
             />
           )}
         </HStack>
@@ -126,10 +114,9 @@ function InputController(props: IInputControllerProps) {
     </KeyboardAvoidingView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    width: Dimensions.get('screen').width,
     backgroundColor: '#FFF',
     padding: 10,
   },
@@ -137,6 +124,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   inputContainer: {
+    width: Dimensions.get('screen').width,
     position: 'absolute',
     bottom: 0,
     left: 0,
@@ -149,32 +137,32 @@ const styles = StyleSheet.create({
     paddingRight: 20
   },
   surface: {
-    borderRadius: 10,
-    backgroundColor: '#FFF',
-    elevation: 10,
-    overflow: 'hidden',
-  },
-  message: {
-    padding: 10,
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    backgroundColor: 'transparent',
+    width: '100%',
+    //margin: 10,
+    marginTop: 10 ,
+    flex: 1,
+    borderRadius: 20,
   },
   input: {
-    backgroundColor: '#FFF',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
+    width: '100%',
+    backgroundColor: 'rgb(240, 240, 240)',
+    borderRadius: 20,
   },
   blur: {
-    //padding: 20,
     position: 'absolute',
     top: 0,
+    alignSelf: 'center',
     left: 0,
     right: 0,
     bottom: 0,
+    width: Dimensions.get('screen').width
+  },
+  sendButton: {
+    backgroundColor: '#1E88E5',
+  },
+  micIcon: {
+    backgroundColor: 'transparent',
   },
 });
 
-export default InputController;
+export default InputController

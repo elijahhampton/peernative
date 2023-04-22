@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Animated } from 'react-native';
+import {View, StyleSheet, Animated} from 'react-native';
 
 const LoadingDots: React.FC = () => {
   const dotSize = 10;

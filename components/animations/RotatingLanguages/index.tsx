@@ -52,7 +52,7 @@ const RotatingLanguages: React.FC = () => {
     return {
       color: colors[colorIndex.value],
     };
-  });
+  }, [colors[colorIndex.value]]);
 
   return (
     <Text style={styles.text}>

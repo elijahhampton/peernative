@@ -1,3 +1,5 @@
+const BASE_ENDPOINT = "https://peer-native.herokuapp.com" || "http://localhost:3001"
+
 const commonAxiosConfig = {
     method: 'POST',
     headers: {
@@ -6,7 +8,6 @@ const commonAxiosConfig = {
     },
 };
 
-const BASE_ENDPOINT = "http://localhost:3001"
 const ROUTES = {
     greeting: 'greeting',
     reply: 'reply'
