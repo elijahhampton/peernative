@@ -6,7 +6,6 @@ import {TOPICS, LANGUAGE_LEVELS, LANGUAGES} from '../../constants/filters';
 import {Button, Divider} from 'react-native-paper';
 import {DeviceEventEmitter} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import Globe from '../../components/animations/PulsatingCircle';
 import RotatingLanguages from '../../components/animations/RotatingLanguages';
 import WaveAnimation from '../../components/animations/DigitalWaveform';
 
