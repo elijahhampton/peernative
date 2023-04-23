@@ -6,7 +6,7 @@ const theme: MD3Theme = {
     version: 3,
     colors: {
         ...DefaultTheme.colors,
-        onSurface: '#212121',
+        onSurface: '#000000',
         primaryContainer: '#FFFFFF',
         background: '#FFFFFF',
         surface: '#FFFFFF',

@@ -1,4 +1,4 @@
-import {KeyboardAvoidingView, StyleSheet, Dimensions} from 'react-native';
+import {KeyboardAvoidingView, StyleSheet, Dimensions, View} from 'react-native';
 import {Box, Stack, HStack, Input} from 'native-base';
 import {Surface, IconButton, TouchableRipple} from 'react-native-paper';
 import Voice from '@react-native-community/voice';
@@ -66,29 +66,18 @@ function InputController(props: IInputControllerProps): JSX.Element {
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
-          width: Dimensions.get('screen').width
-          
+          width: Dimensions.get('screen').width,
         }}>
-        <HStack space={2} alignItems="center" style={styles.inputContainer}>
-          <BlurView
-            style={styles.blur}
-            blurType="light"
-            tint="#fff"
-            intensity={10}
+        <HStack space={4} alignItems="center" style={styles.inputContainer}>
+          <Input
+            value={inputVal}
+            w="100%"
+            p={3}
+            onChangeText={onChange}
+            style={styles.input}
+            variant="unstyled"
+            placeholder="Say hello"
           />
-          <Surface
-            elevation={0}
-            style={styles.surface}>
-            <Input
-              value={inputVal}
-              w="100%"
-              p={3}
-              onChangeText={onChange}
-              style={styles.input}
-              variant="unstyled"
-              placeholder="Start a conversation"
-            />
-          </Surface>
 
           {inputVal.length > 0 && !speaking ? (
             <IconButton
@@ -124,45 +113,26 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   inputContainer: {
-    width: Dimensions.get('screen').width,
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    zIndex: 1,
     display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
     alignItems: 'center',
     justifyContent: 'space-evenly',
-    paddingLeft: 0,
-    paddingRight: 20
-  },
-  surface: {
-    width: '100%',
-    //margin: 10,
-    marginTop: 10 ,
-    flex: 1,
-    borderRadius: 20,
+    paddingHorizontal: 40,
   },
   input: {
-    width: '100%',
     backgroundColor: 'rgb(240, 240, 240)',
     borderRadius: 20,
-  },
-  blur: {
-    position: 'absolute',
-    top: 0,
-    alignSelf: 'center',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    width: Dimensions.get('screen').width
+    marginRight: 20,
   },
   sendButton: {
     backgroundColor: '#1E88E5',
   },
   micIcon: {
     backgroundColor: 'transparent',
+    marginHorizontal: 20,
+    marginLeft: 20,
   },
 });
 
-export default InputController
+export default InputController;

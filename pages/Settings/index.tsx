@@ -145,7 +145,7 @@ function Settings(props: ISettingsProps) {
                 dropDownItemSelectedStyle={styles.bgcolorWhite}
                 dropDownStyle={styles.bgcolorWhite}
                 style={{backgroundColor: '#FFFFFF'}}
-                label={'Training Target'}
+                label={'Difficulty'}
                 mode={'outlined'}
                 visible={dropdownVisibilities['desired_training_level']}
                 showDropDown={() =>

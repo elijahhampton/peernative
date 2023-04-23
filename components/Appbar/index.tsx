@@ -80,7 +80,7 @@ function Appbar(props: IAppbarProps) {
 
 const styles = StyleSheet.create({
   linearGradientTextStyles: {
-    fontSize: 24.5,
+    fontSize: 26,
     paddingTop: 10,
     paddingBottom: 10,
     fontWeight: '600',
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   },
   label: {
     color: '#fff',
-    fontSize: 14,
+    fontSize: 12,
     textAlign: 'center',
     fontFamily: 'System', // Change to a custom font if desired
   },

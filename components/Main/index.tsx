@@ -1,10 +1,5 @@
 import React, {useState} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  View,
-  Text,
-} from 'react-native';
+import {SafeAreaView, StyleSheet, View, Text} from 'react-native';
 
 import {Divider, Button} from 'react-native-paper';
 import {Box, Stack} from 'native-base';
@@ -49,10 +44,8 @@ function Main(): JSX.Element {
     setTextInputVal('');
   };
 
-  const {
-    isLoading: isLoadingPromptGreeting,
-    mutateAsync: onPromptAsync,
-  } = useSendGreetingWithTargets();
+  const {isLoading: isLoadingPromptGreeting, mutateAsync: onPromptAsync} =
+    useSendGreetingWithTargets();
   const {
     isLoading: isLoadingGptResponse,
     mutate: onRespond,
@@ -141,7 +134,7 @@ function Main(): JSX.Element {
       pastConversation: conversationCache,
     })
       .then((axiosResponse: any) => {
-        console.log(axiosResponse)
+        console.log(axiosResponse);
         const gptTimestamp = axiosResponse?.timestamp;
         const replyResponse = axiosResponse?.replyResponse;
         const responseContent = String(replyResponse.content).replace('.', '');
@@ -181,7 +174,7 @@ function Main(): JSX.Element {
       })
       .catch((error: AxiosError) => {
         console.log(error?.message);
-      })
+      });
   };
 
   const updateConversationFromUser = async () => {
@@ -244,7 +237,8 @@ function Main(): JSX.Element {
 
   return (
     //@ts-ignore
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
+      <SafeAreaView />
       <Appbar
         title="Conversation"
         onShowFilters={() => navigation.navigate('Settings')}
@@ -265,12 +259,13 @@ function Main(): JSX.Element {
           ) : (
             <View style={styles.sessionAwaitingContainer}>
               <Stack space={5} style={styles.directionalContainer}>
-              <Stack space={3} style={styles.directionalTextContainer}>
+                <Stack space={3} style={styles.directionalTextContainer}>
                   <Text style={styles.directionalTextTitle}>
-                   Configure your settings ⚙️
+                    Configure your settings ⚙️
                   </Text>
                   <Text style={styles.directionalText}>
-                    Review the current configurations (in the app bar) and change if necessary
+                    Review the current configurations (in the app bar) and
+                    change if necessary
                   </Text>
                 </Stack>
 
@@ -318,15 +313,17 @@ function Main(): JSX.Element {
         </Box>
 
         <Divider />
-        <InputController
-          inputVal={textInputVal}
-          onChange={handleChangeTextInput}
-          onSubmit={handleOnSubmit}
-          onClearInput={clear}
-          onSetInputVal={setTextInputVal}
-        />
+        <SafeAreaView>
+          <InputController
+            inputVal={textInputVal}
+            onChange={handleChangeTextInput}
+            onSubmit={handleOnSubmit}
+            onClearInput={clear}
+            onSetInputVal={setTextInputVal}
+          />
+        </SafeAreaView>
       </Box>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -362,7 +359,7 @@ const styles = StyleSheet.create({
   },
   directionalTextTitle: {
     textAlign: 'center',
-    color: '#212121',
+    color: '#000000',
     fontWeight: '600',
   },
   directionalContainer: {
