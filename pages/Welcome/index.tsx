@@ -70,8 +70,16 @@ function Welcome() {
           <RotatingLanguages />
         </View>
 
-        <Box>
-          <Divider />
+        <Box style={{position: 'absolute', bottom: 80}}>
+          <Button
+            onPress={onGetStarted}
+            style={{margin: 10, padding: 3}}
+            mode="contained">
+            Have a conversation with Peer
+          </Button>
+        </Box>
+        <Box style={{marginTop: 250}}>
+          {/* <Divider /> */}
           <Text
             style={{
               fontSize: 12,
@@ -87,14 +95,8 @@ function Welcome() {
             in the way you can chat with the AI as you talk with your friends.
           </Text>
         </Box>
+        {/* TEXT */}
       </Stack>
-
-      <Button
-        onPress={onGetStarted}
-        style={{margin: 20, padding: 3, width: '90%'}}
-        mode="contained">
-        Have a conversation with Peer
-      </Button>
     </SafeAreaView>
   );
 }
