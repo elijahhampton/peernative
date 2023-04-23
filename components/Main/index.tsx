@@ -246,7 +246,7 @@ function Main(): JSX.Element {
     //@ts-ignore
     <SafeAreaView style={styles.container}>
       <Appbar
-        title="Peer"
+        title="Conversation"
         onShowFilters={() => navigation.navigate('Settings')}
         onRefresh={onRefreshSession}
       />
@@ -259,20 +259,19 @@ function Main(): JSX.Element {
           }>
           {hasSessionStarted ? (
             <Conversation
-              filters={filters}
               conversation={conversation}
               sessionStarted={hasSessionStarted}
             />
           ) : (
             <View style={styles.sessionAwaitingContainer}>
               <Stack space={5} style={styles.directionalContainer}>
-                <Stack space={3} style={styles.directionalTextContainer}>
-                  <Button
-                    mode="text"
-                    onPress={() => navigation.navigate('Settings')}
-                    style={{}}>
-                    Configure your settings ⚙️
-                  </Button>
+              <Stack space={3} style={styles.directionalTextContainer}>
+                  <Text style={styles.directionalTextTitle}>
+                   Configure your settings ⚙️
+                  </Text>
+                  <Text style={styles.directionalText}>
+                    Review the current configurations (in the app bar) and change if necessary
+                  </Text>
                 </Stack>
 
                 <Stack space={3} style={styles.directionalTextContainer}>

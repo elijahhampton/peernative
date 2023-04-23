@@ -5,20 +5,14 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import moment from 'moment';
 import {useNavigation} from '@react-navigation/native';
 import LoadingDots from '../animations/LoadingDots';
+import UserResponse from '../Response/UserResponse';
+import SystemResponse from '../Response/SystemResponse';
 
 Icon.loadFont();
-
-interface IFilterState {
-  desired_training_level: string;
-  language: string;
-  topic: string;
-  target_language: string;
-}
 
 interface IConversationProps {
   conversation: Array<any>;
   sessionStarted: boolean;
-  filters: IFilterState;
 }
 
 interface IResponse {
@@ -26,19 +20,12 @@ interface IResponse {
   role: string;
 }
 
-type PeerResponse = IResponse & {
-  suggestion: string;
-  error?: string;
-  loading: boolean;
-};
 type UserResponse = IResponse;
 
 function Conversation(props: IConversationProps) {
-  const {conversation, sessionStarted, filters} = props;
+  const {conversation, sessionStarted} = props;
 
   const scrollViewRef = useRef();
-
-  const navigation = useNavigation();
 
   return (
     <Box style={styles.container}>
@@ -52,110 +39,18 @@ function Conversation(props: IConversationProps) {
         }}>
         <Stack space={5} style={styles.stack}>
           {sessionStarted &&
-            conversation.map((response: IResponse) => {
-              return renderResponse(response);
+            conversation.map((response: IResponse, idx: number) => {
+              return response?.role === 'user' ? (
+                <UserResponse key={idx} response={response} />
+              ) : (
+                <SystemResponse key={idx} response={response} />
+              );
             })}
         </Stack>
       </ScrollView>
     </Box>
   );
 }
-
-const renderResponse = (response: IResponse): JSX.Element => {
-  switch (response.role) {
-    case 'user':
-      return renderUserResponse(response);
-    case 'system':
-      return renderSystemResponse(response);
-    case 'assistant':
-      return renderPeerResponse(response);
-    default:
-      return null;
-  }
-};
-
-const renderUserResponse = (response: UserResponse): JSX.Element => {
-  return (
-    <Box key={response?.response} style={styles.userResponseBox}>
-      <Box style={styles.userResponseInnerBox}>
-        <Text style={styles.text}>{response?.content}</Text>
-        <Text style={styles.timestamp}>
-          {moment(new Date()).format('MM/DD/YYYY hh:mm A').toString()}
-        </Text>
-      </Box>
-    </Box>
-  );
-};
-
-const renderPeerResponse = (response: PeerResponse): JSX.Element => {
-  if (!!response?.isLoading) {
-    return (
-      <>
-        <Box key={response?.response} style={styles.peerResponseLoadingBox}>
-          <Box style={styles.peerResponseInnerBox}>
-            <LoadingDots />
-          </Box>
-        </Box>
-      </>
-    );
-  }
-
-  return (
-    <>
-      <Box key={response?.response} style={styles.peerResponseBox}>
-        <Box style={styles.peerResponseInnerBox}>
-          <Text style={styles.text}>{response?.response}</Text>
-          <Text style={styles.timestamp}>
-            {moment(response?.timestamp)
-              .format('MM/DD/YYYY hh:mm A')
-              .toString()}
-          </Text>
-        </Box>
-      </Box>
-    </>
-  );
-};
-
-const renderSystemResponse = (response: IResponse): JSX.Element => {
-  if (!!response?.isLoading) {
-    return (
-      <>
-        <Box key={response?.response} style={styles.systemResponseLoadingBox}>
-          <Box style={styles.systemResponseInnerBox}>
-            <LoadingDots />
-          </Box>
-        </Box>
-      </>
-    );
-  }
-  return (
-    <>
-      <Box key={response?.response} style={styles.systemResponseBox}>
-        <Box style={styles.systemResponseInnerBox}>
-          <Text style={styles.text}>{response?.response}</Text>
-          <Text style={styles.timestamp}>
-            {moment(response?.timestamp)
-              .format('MM/DD/YYYY hh:mm A')
-              .toString()}
-          </Text>
-        </Box>
-      </Box>
-
-      {response?.suggestion && (
-        <Box style={styles.suggestionBox}>
-          <Box style={styles.suggestionInnerBox}>
-            <HStack alignItems="center">
-              <Icon name="information-circle-outline" size={22} />
-              <Text style={styles.suggestionTitle}>Suggestion</Text>
-            </HStack>
-
-            <Text style={styles.suggestionText}>{response?.suggestion}</Text>
-          </Box>
-        </Box>
-      )}
-    </>
-  );
-};
 
 const styles = StyleSheet.create({
   container: {
