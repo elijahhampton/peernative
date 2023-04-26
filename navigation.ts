@@ -1,4 +1,4 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-const Stack = createNativeStackNavigator();
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+const Stack = createBottomTabNavigator();
 
 export default Stack;
