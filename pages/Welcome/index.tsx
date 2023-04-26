@@ -61,12 +61,13 @@ function Welcome() {
         }}>
         {/* <Globe /> */}
         <WaveAnimation />
-        <View style={{display: 'flex', alignItems: 'center'}}>
-          <Text style={{paddingBottom: 10, fontSize: 20, fontWeight: '600'}}>
+        <View style={{display: 'flex', alignItems: 'baseline'}}>
+          <Text style={{paddingBottom: 10, fontSize: 30, fontWeight: '600'}}>
             Welcome to Peer Native
           </Text>
-          <RotatingLanguages />
+          {/* <RotatingLanguages /> */}
         </View>
+        <RotatingLanguages />
 
         <Box style={{position: 'absolute', bottom: 80}}>
           <Button
@@ -76,7 +77,7 @@ function Welcome() {
             Have a conversation with Peer
           </Button>
         </Box>
-        <Box style={{marginTop: 250}}>
+        <Box style={{marginTop: 230}}>
           {/* <Divider /> */}
           <Text
             style={{
