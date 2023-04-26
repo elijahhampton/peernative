@@ -5,12 +5,18 @@ import {ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {HStack, Stack} from 'native-base';
 import {useNavigation} from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
+import React from 'react';
 
-const ModernChip = ({label, onPress}) => {
+interface IModernChipProps {
+  label: string;
+  onPress: () => void;
+}
+const ModernChip = ({label, onPress}: IModernChipProps) => {
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
       <LinearGradient
         colors={['#1e90ff', '#87CEFA']}
+        a
         start={{x: 0, y: 0}}
         end={{x: 1, y: 1}}
         style={[styles.chip]}>

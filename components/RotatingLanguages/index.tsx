@@ -56,7 +56,7 @@ const RotatingLanguages: React.FC = () => {
 
   return (
     <Text style={styles.text}>
-      The AI platform helping you learn{' '}
+      The AI platform helping you improve{' '}
       <Animated.Text style={animatedStyle}>
         <Typewriter text={languages[currentLanguageIndex]} onCompleted={changeLanguage} />
       </Animated.Text>

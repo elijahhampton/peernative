@@ -5,6 +5,7 @@ import Voice from '@react-native-community/voice';
 import {useState, useEffect} from 'react';
 import {BlurView} from '@react-native-community/blur';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useHeaderHeight } from '@react-navigation/elements'
 
 interface IInputControllerProps {
   inputVal: string;
@@ -15,6 +16,7 @@ interface IInputControllerProps {
 }
 
 function InputController(props: IInputControllerProps): JSX.Element {
+  const height = useHeaderHeight()
   const {inputVal, onSetInputVal, onChange, onSubmit, onClearInput} = props;
 
   const [speaking, setSpeaking] = useState<boolean>(false);
@@ -58,9 +60,10 @@ function InputController(props: IInputControllerProps): JSX.Element {
   return (
     <KeyboardAvoidingView
       behavior="padding"
-      keyboardVerticalOffset={130}
+      keyboardVerticalOffset={height + 160}
+      enabled
       style={styles.container}>
-      <Box
+      <View
         style={{
           // padding: 10
           display: 'flex',
@@ -99,7 +102,7 @@ function InputController(props: IInputControllerProps): JSX.Element {
             />
           )}
         </HStack>
-      </Box>
+      </View>
     </KeyboardAvoidingView>
   );
 }

@@ -12,7 +12,7 @@ const languages = [
   '日本語',
 ];
 
-const colors = ['#42A5F5', '#81D4FA', '#fafafa'];
+const colors = ['#42A5F5', '#81D4FA'];
 
 const Typewriter: React.FC<{ text: string; onCompleted: () => void }> = ({ text, onCompleted }) => {
   const [displayText, setDisplayText] = useState('');
@@ -36,7 +36,7 @@ const Typewriter: React.FC<{ text: string; onCompleted: () => void }> = ({ text,
     return () => clearTimeout(timeout);
   }, [isDeleting, displayText, text, onCompleted]);
 
-  return <Text>{displayText}</Text>;
+  return <Text style={{ paddingTop: 10 }}>{displayText}</Text>;
 };
 
 const RotatingLanguages: React.FC = () => {
@@ -56,20 +56,20 @@ const RotatingLanguages: React.FC = () => {
 
   return (
     <Text style={styles.text}>
-      The AI platform helping you learn{' '}
-      <Animated.Text style={animatedStyle}>
+      The AI platform helping you improve {' '}
+      <Animated.Text style={[animatedStyle, { alignSelf: 'center'}]}>
         <Typewriter text={languages[currentLanguageIndex]} onCompleted={changeLanguage} />
       </Animated.Text>
-      .
+      
     </Text>
   );
 };
 
 const styles = StyleSheet.create({
   text: {
+    textAlign: 'center',
     fontSize: 18,
     fontWeight: 'normal',
-    marginTop: -30,
   },
 });
 

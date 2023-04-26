@@ -55,9 +55,10 @@ function Conversation(props: IConversationProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'rgb(243, 244 250)',
   },
   contentContainer: {
-    backgroundColor: '#FFF',
+    backgroundColor: 'rgb(243, 244 250)',
     paddingBottom: 40,
     paddingLeft: 10,
     paddingRight: 10,

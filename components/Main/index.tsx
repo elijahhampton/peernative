@@ -237,7 +237,11 @@ function Main(): JSX.Element {
   return (
     //@ts-ignore
     <View style={styles.container}>
-      <SafeAreaView />
+      <SafeAreaView style={{     shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 4 }} />
       <Appbar
         title="Conversation"
         onShowFilters={() => navigation.navigate('Settings')}
@@ -312,7 +316,7 @@ function Main(): JSX.Element {
         </Box>
 
         <Divider />
-        <SafeAreaView>
+     
           <InputController
             inputVal={textInputVal}
             onChange={handleChangeTextInput}
@@ -320,7 +324,7 @@ function Main(): JSX.Element {
             onClearInput={clear}
             onSetInputVal={setTextInputVal}
           />
-        </SafeAreaView>
+        <SafeAreaView />
       </Box>
     </View>
   );
@@ -333,11 +337,11 @@ const styles = StyleSheet.create({
   },
   sessionStarted: {
     flex: 1,
-    backgroundColor: '#FFF',
+    backgroundColor: 'rgb(243, 244 250)',
   },
   sessionAwaiting: {
     flex: 1,
-    backgroundColor: '#FFF',
+    backgroundColor: 'rgb(243, 244 250)',
   },
   sessionAwaitingContainer: {
     width: '100%',
@@ -364,7 +368,7 @@ const styles = StyleSheet.create({
   directionalContainer: {
     width: '100%',
     borderRadius: 8,
-    backgroundColor: '#f2f2f2',
+    backgroundColor: 'transparent',
     padding: 20,
   },
 });

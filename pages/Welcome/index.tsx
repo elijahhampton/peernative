@@ -53,48 +53,28 @@ function Welcome() {
       <Stack
         space={10}
         style={{
+          width: '100%',
+          position: 'relative',
           flex: 1,
-          paddingTop: 150,
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#FFF',
           display: 'flex',
           alignItems: 'center',
+          justifyContent: 'space-evenly',
         }}>
-        {/* <Globe /> */}
         <WaveAnimation />
-        <View style={{display: 'flex', alignItems: 'baseline'}}>
-          <Text style={{paddingBottom: 10, fontSize: 30, fontWeight: '600'}}>
+        <View style={{display: 'flex', alignItems: 'center'}}>
+          <Text style={{paddingVertical: 10, fontSize: 20, fontWeight: '600'}}>
             Welcome to Peer Native
           </Text>
-          {/* <RotatingLanguages /> */}
+          <RotatingLanguages />
         </View>
-        <RotatingLanguages />
 
-        <Box style={{position: 'absolute', bottom: 80}}>
-          <Button
-            onPress={onGetStarted}
-            style={{margin: 10, padding: 3}}
-            mode="contained">
-            Have a conversation with Peer
-          </Button>
-        </Box>
-        <Box style={{marginTop: 230}}>
-          {/* <Divider /> */}
-          <Text
-            style={{
-              fontSize: 12,
-              color: '#757575',
-              fontStyle: 'italic',
-              letterSpacing: 0.5,
-              lineHeight: 16,
-              padding: 20,
-              textAlign: 'center',
-              textAlignVertical: 'center',
-            }}>
-            Peer Native works in a similar way to other messaging applications
-            in the way you can chat with the AI as you talk with your friends.
-          </Text>
-        </Box>
-        {/* TEXT */}
+        <Button
+          onPress={onGetStarted}
+          style={{padding: 3, borderRadius: 5, width: '85%'}}
+          mode="contained">
+          Have a conversation with Peer
+        </Button>
       </Stack>
     </SafeAreaView>
   );
