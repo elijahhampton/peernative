@@ -14,7 +14,6 @@ interface ISettingsProps {}
 
 interface IFilterState {
   desired_training_level: string;
-  language: string;
   topic: string;
   target_language: string;
 }
@@ -76,36 +75,6 @@ function Settings(props: ISettingsProps) {
               space={4}
               alignItems="center"
               justifyContent="space-between">
-              <Box style={{flex: 1}}>
-                <DropDown
-                  dropDownItemStyle={styles.bgcolorWhite}
-                  dropDownItemSelectedStyle={styles.bgcolorWhite}
-                  dropDownStyle={styles.bgcolorWhite}
-                  label={'Language'}
-                  mode={'outlined'}
-                  visible={dropdownVisibilities['language']}
-                  showDropDown={() =>
-                    setDropdownVisibilities({
-                      ...dropdownVisibilities,
-                      language: true,
-                    })
-                  }
-                  onDismiss={() =>
-                    setDropdownVisibilities({
-                      ...dropdownVisibilities,
-                      language: false,
-                    })
-                  }
-                  value={filters['language']}
-                  setValue={value =>
-                    setFilters({
-                      ...filters,
-                      language: value,
-                    })
-                  }
-                  list={LANGUAGES}
-                />
-              </Box>
 
               <Box style={{flex: 1}}>
                 <DropDown

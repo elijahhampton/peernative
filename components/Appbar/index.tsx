@@ -65,7 +65,7 @@ function Appbar(props: IAppbarProps) {
             onPress={() => navigation.navigate('Settings')}
           />
           <ModernChip
-            label="Target Language: Español"
+            label="Language: Español"
             onPress={() => navigation.navigate('Settings')}
           />
           <ModernChip

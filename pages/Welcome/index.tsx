@@ -11,7 +11,6 @@ import WaveAnimation from '../../components/animations/DigitalWaveform';
 
 interface IFilterState {
   desired_training_level: string;
-  language: string;
   topic: string;
   target_language: string;
 }
@@ -20,7 +19,6 @@ function Welcome() {
   const navigation = useNavigation();
   const [filters, setFilters] = useState<IFilterState>({
     desired_training_level: 'B2',
-    language: 'English',
     target_language: 'Spanish',
     topic: TOPICS[0].value,
   });

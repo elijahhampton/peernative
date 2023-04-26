@@ -16,17 +16,17 @@ import {TOPICS} from '../../constants/filters';
 import InputController from '../InputController';
 import {useNavigation} from '@react-navigation/native';
 import {DeviceEventEmitter} from 'react-native';
-
+import * as RNLocalize from 'react-native-localize';
 Icon.loadFont();
 
 interface IFilterState {
   desired_training_level: string;
-  language: string;
   topic: string;
   target_language: string;
 }
 
 function Main(): JSX.Element {
+  const deviceLanguage = RNLocalize.getLocales()[0].languageCode;
   const [hasSessionStarted, setHasSessionStarted] = useState<boolean>(false);
   const [textInputVal, setTextInputVal] = React.useState('');
 
@@ -35,7 +35,6 @@ function Main(): JSX.Element {
 
   const [filters, setFilters] = useState<IFilterState>({
     desired_training_level: 'B2',
-    language: 'English',
     target_language: 'Spanish',
     topic: TOPICS[0].value,
   });
@@ -73,7 +72,7 @@ function Main(): JSX.Element {
 
     onPromptAsync({
       greeting,
-      user_language,
+      user_language: deviceLanguage,
       user_target_language,
       topic,
       training_level,
