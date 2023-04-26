@@ -1,5 +1,8 @@
+# Misc
+.env
+.vscode/
+
 # OSX
-#
 .DS_Store
 
 # Xcode
