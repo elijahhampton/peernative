@@ -17,8 +17,8 @@ function Navigation(): JSX.Element {
         tabBarIcon: ({focused, color, size}) => {
           let iconName;
 
-          if (route.name === 'Home') {
-            iconName = focused ? 'home' : 'home-outline';
+          if (route.name === 'Chat') {
+            iconName = focused ? 'chatbox' : 'chatbox-ellipses-outline';
           } else if (route.name === 'Settings') {
             iconName = focused ? 'settings' : 'settings-outline';
           } else if (route.name === 'About') {
@@ -35,7 +35,7 @@ function Navigation(): JSX.Element {
         inactiveTintColor: 'gray',
       }}>
       <Stack.Screen name="Welcome" component={Welcome} />
-      <Stack.Screen name="Home" component={Main} />
+      <Stack.Screen name="Chat" component={Main} />
       <Stack.Screen name="Settings" component={Settings} />
       <Stack.Screen name="About" component={About} />
     </Stack.Navigator>
