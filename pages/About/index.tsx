@@ -1,5 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
-import {SafeAreaView, StyleSheet} from 'react-native';
+import {SafeAreaView, StyleSheet, View, Text, Image} from 'react-native';
 import {Appbar, Button} from 'react-native-paper';
 
 function About() {
@@ -15,6 +15,22 @@ function About() {
           style={styles.content}
         />
       </Appbar>
+      <View style={styles.contentContainer}>
+        <Text
+          style={{
+            fontSize: 12,
+            color: '#757575',
+            fontStyle: 'italic',
+            letterSpacing: 0.5,
+            lineHeight: 16,
+            padding: 20,
+            textAlign: 'center',
+            textAlignVertical: 'center',
+          }}>
+          Peer Native works in a similar way to other messaging applications in
+          the way you can chat with the AI as you talk with your friends.
+        </Text>
+      </View>
     </SafeAreaView>
   );
 }
@@ -35,8 +51,22 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   header: {
-    display: 'flex',
     backgroundColor: '#FFF',
+  },
+  contentContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 20,
+  },
+  image: {
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
   },
 });
 
