@@ -32,7 +32,7 @@ function Welcome() {
 
   const onGetStarted = () => {
     DeviceEventEmitter.emit('new_filters', filters);
-    navigation.navigate('Home');
+    navigation.navigate('Chat');
   };
 
   useEffect(() => {

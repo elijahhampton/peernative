@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -7,25 +7,25 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-const colors = ['#42A5F5', '#81D4FA', '#fafafa']
+const colors = ['#42A5F5', '#81D4FA', '#fafafa'];
 const createAnimatedCircleStyle = (
   baseScale: number,
   duration: number,
-  delay: number
+  delay: number,
 ) => {
   const scale = useSharedValue(baseScale);
 
   React.useEffect(() => {
     scale.value = withRepeat(
-      withTiming(baseScale === 1 ? 0.8 : 1, { duration, delay }),
+      withTiming(baseScale === 1 ? 0.8 : 1, {duration, delay}),
       -1,
-      true
+      true,
     );
   }, []);
 
   return useAnimatedStyle(() => {
     return {
-      transform: [{ scale: scale.value }],
+      transform: [{scale: scale.value}],
     };
   }, [scale.value]);
 };
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 40
+    marginBottom: 40,
   },
   circle: {
     position: 'absolute',

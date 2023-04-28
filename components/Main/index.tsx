@@ -237,11 +237,15 @@ function Main(): JSX.Element {
   return (
     //@ts-ignore
     <View style={styles.container}>
-      <SafeAreaView style={{     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 4 }} />
+      <SafeAreaView
+        style={{
+          shadowColor: '#000',
+          shadowOffset: {width: 0, height: 2},
+          shadowOpacity: 0.1,
+          shadowRadius: 3,
+          elevation: 4,
+        }}
+      />
       <Appbar
         title="Conversation"
         onShowFilters={() => navigation.navigate('Settings')}
@@ -316,14 +320,14 @@ function Main(): JSX.Element {
         </Box>
 
         <Divider />
-     
-          <InputController
-            inputVal={textInputVal}
-            onChange={handleChangeTextInput}
-            onSubmit={handleOnSubmit}
-            onClearInput={clear}
-            onSetInputVal={setTextInputVal}
-          />
+
+        <InputController
+          inputVal={textInputVal}
+          onChange={handleChangeTextInput}
+          onSubmit={handleOnSubmit}
+          onClearInput={clear}
+          onSetInputVal={setTextInputVal}
+        />
         <SafeAreaView />
       </Box>
     </View>

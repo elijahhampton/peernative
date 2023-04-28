@@ -75,7 +75,6 @@ function Settings(props: ISettingsProps) {
               space={4}
               alignItems="center"
               justifyContent="space-between">
-
               <Box style={{flex: 1}}>
                 <DropDown
                   dropDownItemStyle={styles.bgcolorWhite}

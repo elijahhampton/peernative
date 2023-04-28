@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import { Dimensions } from 'react-native';
-import { Line, Svg } from 'react-native-svg';
+import React, {useEffect} from 'react';
+import {Dimensions} from 'react-native';
+import {Line, Svg} from 'react-native-svg';
 import Animated, {
   useAnimatedProps,
   useSharedValue,
@@ -9,7 +9,7 @@ import Animated, {
   Easing,
 } from 'react-native-reanimated';
 
-const { width } = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 const AnimatedLine = Animated.createAnimatedComponent(Line);
 
 const numberOfLines = 20;
@@ -17,7 +17,7 @@ const duration = 2000;
 const amplitude = 50;
 const centerY = amplitude;
 
-const WaveLine = ({ index }) => {
+const WaveLine = ({index}) => {
   const phaseShift = useSharedValue(0);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const WaveLine = ({ index }) => {
         easing: Easing.linear,
       }),
       -1,
-      true
+      true,
     );
   }, [phaseShift]);
 
@@ -56,7 +56,7 @@ const WaveLine = ({ index }) => {
 const WaveAnimation = () => {
   return (
     <Svg width={width} height={2 * amplitude}>
-      {Array.from({ length: numberOfLines }, (_, i) => (
+      {Array.from({length: numberOfLines}, (_, i) => (
         <WaveLine key={i} index={i} />
       ))}
     </Svg>

@@ -28,7 +28,7 @@ function useSendGreetingWithTargets(): UseMutationResult<
         user_language,
         user_target_language,
         topic,
-        training_level
+        training_level,
       ),
   );
 }
