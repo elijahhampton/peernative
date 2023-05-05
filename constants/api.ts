@@ -1,5 +1,4 @@
-const BASE_ENDPOINT =
-  'https://peer-native.herokuapp.com' || 'http://localhost:3001';
+const BASE_ENDPOINT = 'https://peer-native.herokuapp.com'
 
 const commonAxiosConfig = {
   method: 'POST',

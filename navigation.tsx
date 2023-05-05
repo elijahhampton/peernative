@@ -1,10 +1,9 @@
 import React from 'react';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import Main from './components/Main';
 import Settings from './pages/Settings';
-import Welcome from './pages/Welcome';
 import About from './pages/About';
 
 interface IconProps {
@@ -12,72 +11,40 @@ interface IconProps {
   size: number;
 }
 
-const Stack = createBottomTabNavigator();
+const Tab = createBottomTabNavigator();
 
-const HomeIcon = ({color, size}: IconProps) => (
-  <Icon name="ios-home-outline" color={color} size={size} />
-);
-
-const ChatIcon = ({color, size}: IconProps) => (
+const ChatIcon = ({ color, size }: IconProps): JSX.Element => (
   <Icon name="ios-chatbubbles-outline" color={color} size={size} />
 );
 
-const SettingsIcon = ({color, size}: IconProps) => (
+const SettingsIcon = ({ color, size }: IconProps): JSX.Element => (
   <Icon name="ios-settings-outline" color={color} size={size} />
 );
 
-const AboutIcon = ({color, size}: IconProps) => (
+const AboutIcon = ({ color, size }: IconProps): JSX.Element => (
   <Icon name="ios-information-circle-outline" color={color} size={size} />
 );
 
-function Navigation(): JSX.Element {
+const Navigation = (): JSX.Element => {
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen
-        name="Welcome"
-        component={Welcome}
-        options={{tabBarIcon: HomeIcon}}
-      />
-      <Stack.Screen
+    <Tab.Navigator screenOptions={{ headerShown: false }}>
+      <Tab.Screen
         name="Chat"
         component={Main}
-        options={{tabBarIcon: ChatIcon}}
+        options={{ tabBarIcon: ChatIcon }}
       />
-      <Stack.Screen
+      <Tab.Screen
         name="Settings"
         component={Settings}
-        options={{tabBarIcon: SettingsIcon}}
+        options={{ tabBarIcon: SettingsIcon }}
       />
-      <Stack.Screen
+      <Tab.Screen
         name="About"
         component={About}
-        options={{tabBarIcon: AboutIcon}}
+        options={{ tabBarIcon: AboutIcon }}
       />
-    </Stack.Navigator>
+    </Tab.Navigator>
   );
-}
+};
 
 export default Navigation;
-
-// import React from 'react';
-// import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-
-// import Main from './components/Main';
-// import Settings from './pages/Settings';
-// import Welcome from './pages/Welcome';
-// import About from './pages/About';
-
-// const Stack = createBottomTabNavigator();
-
-// function Navigation(): JSX.Element {
-//   return (
-//     <Stack.Navigator screenOptions={{headerShown: false}}>
-//       <Stack.Screen name="Welcome" component={Welcome} />
-//       <Stack.Screen name="Chat" component={Main} />
-//       <Stack.Screen name="Settings" component={Settings} />
-//       <Stack.Screen name="About" component={About} />
-//     </Stack.Navigator>
-//   );
-// }
-
-// export default Navigation;

@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   systemResponseBox: {
-    backgroundColor: '#f2f2f2',
+    backgroundColor: '#fffff',
     padding: 10,
     borderRadius: 8,
     maxWidth: '70%',

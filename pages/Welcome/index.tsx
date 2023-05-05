@@ -1,45 +1,17 @@
-import {Stack, Box} from 'native-base';
-import React, {useState, useEffect} from 'react';
+import {Stack } from 'native-base';
+import React from 'react';
 import {View, Text, SafeAreaView} from 'react-native';
-import DropDown from 'react-native-paper-dropdown';
-import {TOPICS, LANGUAGE_LEVELS, LANGUAGES} from '../../constants/filters';
-import {Button, Divider} from 'react-native-paper';
-import {DeviceEventEmitter} from 'react-native';
+import {Button } from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import RotatingLanguages from '../../components/animations/RotatingLanguages';
 import WaveAnimation from '../../components/animations/DigitalWaveform';
 
-interface IFilterState {
-  desired_training_level: string;
-  topic: string;
-  target_language: string;
-}
-
 function Welcome() {
   const navigation = useNavigation();
-  const [filters, setFilters] = useState<IFilterState>({
-    desired_training_level: 'B2',
-    target_language: 'Spanish',
-    topic: TOPICS[0].value,
-  });
-
-  const [dropdownVisibilities, setDropdownVisibilities] = useState({
-    desired_training_level: false,
-    language: false,
-    target_language: false,
-    topic: false,
-  });
 
   const onGetStarted = () => {
-    DeviceEventEmitter.emit('new_filters', filters);
-    navigation.navigate('Chat');
+    navigation.navigate('App');
   };
-
-  useEffect(() => {
-    return () => {
-      DeviceEventEmitter.removeAllListeners('new_filters');
-    };
-  }, []);
 
   return (
     <SafeAreaView
@@ -71,7 +43,7 @@ function Welcome() {
 
         <Button
           onPress={onGetStarted}
-          style={{padding: 3, borderRadius: 5, width: '85%'}}
+          style={{padding: 3, borderRadius: 30, width: '85%'}}
           mode="contained">
           Have a conversation with Peer
         </Button>

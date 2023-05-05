@@ -9,27 +9,18 @@ import {DeviceEventEmitter} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Linking} from 'react-native';
+import { IFilterState } from '../../types';
 
 interface ISettingsProps {}
-
-interface IFilterState {
-  desired_training_level: string;
-  topic: string;
-  target_language: string;
-}
 
 function Settings(props: ISettingsProps) {
   const navigation = useNavigation();
   const [filters, setFilters] = useState<IFilterState>({
-    desired_training_level: 'B2',
-    language: 'English',
     target_language: 'Spanish',
     topic: TOPICS[0].value,
   });
 
   const [dropdownVisibilities, setDropdownVisibilities] = useState({
-    desired_training_level: false,
-    language: false,
     target_language: false,
     topic: false,
   });
@@ -37,19 +28,6 @@ function Settings(props: ISettingsProps) {
   const onSaveSessionFilters = () => {
     DeviceEventEmitter.emit('new_filters', filters);
     navigation.goBack();
-  };
-
-  const openURL = async url => {
-    // Check if the provided URL can be opened
-    const canOpen = await Linking.canOpenURL(url);
-
-    if (canOpen) {
-      // Open the URL in the system browser
-      Linking.openURL(url);
-    } else {
-      // Show an error message if the URL cannot be opened
-      Alert.alert('Error', 'Unable to open the URL');
-    }
   };
 
   useEffect(() => {
@@ -106,53 +84,6 @@ function Settings(props: ISettingsProps) {
                 />
               </Box>
             </HStack>
-
-            <Box>
-              <DropDown
-                dropDownItemStyle={styles.bgcolorWhite}
-                dropDownItemSelectedStyle={styles.bgcolorWhite}
-                dropDownStyle={styles.bgcolorWhite}
-                style={{backgroundColor: '#FFFFFF'}}
-                label={'Difficulty'}
-                mode={'outlined'}
-                visible={dropdownVisibilities['desired_training_level']}
-                showDropDown={() =>
-                  setDropdownVisibilities({
-                    ...dropdownVisibilities,
-                    desired_training_level: true,
-                  })
-                }
-                onDismiss={() =>
-                  setDropdownVisibilities({
-                    ...dropdownVisibilities,
-                    desired_training_level: false,
-                  })
-                }
-                value={filters['desired_training_level']}
-                setValue={value =>
-                  setFilters({
-                    ...filters,
-                    desired_training_level: value,
-                  })
-                }
-                list={LANGUAGE_LEVELS}
-              />
-              <HStack
-                space={1}
-                alignItems="center"
-                style={styles.helperTextContainer}>
-                <Icon name="ios-information-circle-outline" />
-                <Text
-                  style={styles.helperText}
-                  onPress={() =>
-                    openURL(
-                      'https://www.coe.int/en/web/common-european-framework-reference-languages/table-1-cefr-3.3-common-reference-levels-global-scale',
-                    )
-                  }>
-                  Levels are based on the CEFR levels
-                </Text>
-              </HStack>
-            </Box>
 
             <DropDown
               dropDownItemStyle={styles.bgcolorWhite}

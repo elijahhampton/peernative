@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
   container: {
     width: Dimensions.get('screen').width,
     backgroundColor: '#FFF',
-    padding: 10,
+    marginVertical: 10
   },
   messageContainer: {
     flex: 1,

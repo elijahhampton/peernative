@@ -22,8 +22,7 @@ const sendGreetingWithTargets = async (
       'Content-Type': 'application/json',
     },
   });
-
-  console.log(axiosResponse);
+  
   return axiosResponse.data;
 };
 
@@ -42,8 +41,6 @@ const sendResponse = async (
       'Content-Type': 'application/json',
     },
   });
-
-  console.log(axiosResponse);
 
   return axiosResponse.data;
 };

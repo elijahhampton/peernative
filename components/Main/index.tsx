@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {SafeAreaView, StyleSheet, View, Text} from 'react-native';
 
 import {Divider, Button} from 'react-native-paper';
@@ -17,56 +17,56 @@ import InputController from '../InputController';
 import {useNavigation} from '@react-navigation/native';
 import {DeviceEventEmitter} from 'react-native';
 import * as RNLocalize from 'react-native-localize';
+import ISO6391 from 'iso-639-1';
+import { IFilterState } from '../../types';
+
 Icon.loadFont();
 
-interface IFilterState {
-  desired_training_level: string;
-  topic: string;
-  target_language: string;
+interface IChatMessage {
+  role: 'assistant' | 'system' | 'user';
+  content: string;
+  response?: string;
+  suggestion?: string;
+  error?: string;
+  timestamp?: string;
 }
 
 function Main(): JSX.Element {
   const deviceLanguage = RNLocalize.getLocales()[0].languageCode;
-  const [hasSessionStarted, setHasSessionStarted] = useState<boolean>(false);
-  const [textInputVal, setTextInputVal] = React.useState('');
 
-  const [conversation, setConversation] = useState<Array<any>>([]);
-  const [conversationCache, setConversationCache] = useState<Array<any>>([]);
+  const navigation = useNavigation();
+  const [hasSessionStarted, setHasSessionStarted] = useState<boolean>(false);
+  const [textInputVal, setTextInputVal] = useState<string>('');
+  const [conversation, setConversation] = useState<IChatMessage[]>([]);
+  const [conversationCache, setConversationCache] = useState<IChatMessage[]>([]);
 
   const [filters, setFilters] = useState<IFilterState>({
-    desired_training_level: 'B2',
     target_language: 'Spanish',
     topic: TOPICS[0].value,
   });
-
-  const clear = () => {
+ 
+  const clear = useCallback(() => {
     setTextInputVal('');
-  };
+  }, [])
 
-  const {isLoading: isLoadingPromptGreeting, mutateAsync: onPromptAsync} =
+  const {mutateAsync: onPromptAsync} =
     useSendGreetingWithTargets();
+
   const {
-    isLoading: isLoadingGptResponse,
-    mutate: onRespond,
     mutateAsync: onRespondAsync,
   } = useSendResponse();
 
   const handlePrompt = (
     greeting: string,
-    user_language: string,
     user_target_language: string,
     topic: string,
-    training_level: string,
   ) => {
     const userTimestamp = new Date();
 
-    setConversation((prevState: any) => [
-      ...prevState,
+    setConversation([
       {role: 'user', content: textInputVal, timestamp: userTimestamp},
       {role: 'assistant', content: '', isLoading: true},
     ]);
-
-    const oldTextInputVal = textInputVal;
 
     clear();
 
@@ -75,27 +75,22 @@ function Main(): JSX.Element {
       user_language: deviceLanguage,
       user_target_language,
       topic,
-      training_level,
+      training_level: 'C1',
     })
       .then((axiosResponse: any) => {
         let updatedChatGptCache = JSON.parse(JSON.stringify(conversationCache));
-        let updatedConversation = JSON.parse(JSON.stringify(conversation));
-
+        let updatedConversation = [] 
+        
         const {
           greetingResponse: {role, content},
           originalPrompt,
           timestamp,
         } = axiosResponse;
-
+        
         updatedChatGptCache.push({role: 'system', content: originalPrompt});
 
-        const parsedContent = JSON.parse(content)[0];
-        const {response, suggestion} = parsedContent;
-
-        let error = '';
-        if (parsedContent?.error) {
-          error = parsedContent.error;
-        }
+        const parsedContent = content.split("|");
+        const [response, suggestion] = parsedContent;
 
         //@ts-ignore
         updatedConversation.push({
@@ -107,11 +102,12 @@ function Main(): JSX.Element {
           role,
           response,
           suggestion,
-          error,
+          error: "",
           timestamp: timestamp,
         });
         updatedChatGptCache.push({role: 'assistant', content});
 
+       //@ts-ignore
         setConversation([...updatedConversation]);
         setConversationCache([...updatedChatGptCache]);
       })
@@ -133,12 +129,13 @@ function Main(): JSX.Element {
       pastConversation: conversationCache,
     })
       .then((axiosResponse: any) => {
-        console.log(axiosResponse);
         const gptTimestamp = axiosResponse?.timestamp;
         const replyResponse = axiosResponse?.replyResponse;
-        const responseContent = String(replyResponse.content).replace('.', '');
-        const parsedResponseContent = JSON.parse(responseContent);
-        const responseRole = replyResponse.role;
+        
+        const { role, content } = replyResponse
+        const parsedContent = content.split("|");
+        const [response, suggestion] = parsedContent;
+
         let updatedConversation = JSON.parse(JSON.stringify(conversation));
         let updatedConversationCache = JSON.parse(
           JSON.stringify(conversationCache),
@@ -146,14 +143,9 @@ function Main(): JSX.Element {
 
         updatedConversationCache.push({role: 'user', content: myResponse});
         updatedConversationCache.push({
-          role: responseRole,
-          content: responseContent,
+          role,
+          content: response,
         });
-
-        let newError = '';
-        if (parsedResponseContent[0]?.error) {
-          newError = parsedResponseContent[0].error;
-        }
 
         updatedConversation.push({
           role: 'user',
@@ -163,9 +155,9 @@ function Main(): JSX.Element {
 
         updatedConversation.push({
           role: 'system',
-          response: parsedResponseContent[0]?.response,
-          suggestion: parsedResponseContent[0]?.suggestion,
-          error: newError,
+          response,
+          suggestion,
+          error: "",
           timestamp: gptTimestamp,
         });
 
@@ -204,29 +196,18 @@ function Main(): JSX.Element {
 
     handlePrompt(
       newResponse,
-      filters['language'],
       filters['target_language'],
-      filters['topic'],
-      filters['desired_training_level'],
+      filters['topic']
     );
   };
 
   const handleChangeTextInput = (text: string) => setTextInputVal(text);
 
-  const onRefreshSession = () => {
+  const onRefreshSession = useCallback(() => {
     setHasSessionStarted(false);
     setConversation([]);
     setConversationCache([]);
-  };
-
-  const onSaveFilters = () => {
-    hideDialog();
-    setHasSessionStarted(false);
-    setConversation([]);
-    setConversationCache([]);
-  };
-
-  const navigation = useNavigation();
+  }, [])
 
   DeviceEventEmitter.addListener('new_filters', eventData => {
     setFilters({...eventData});
@@ -247,6 +228,7 @@ function Main(): JSX.Element {
         }}
       />
       <Appbar
+        filters={filters}
         title="Conversation"
         onShowFilters={() => navigation.navigate('Settings')}
         onRefresh={onRefreshSession}
@@ -281,8 +263,7 @@ function Main(): JSX.Element {
                     Send your first message 💬
                   </Text>
                   <Text style={styles.directionalText}>
-                    Choose your language, target language, target level and
-                    topic
+                    Choose a target language and topic.
                   </Text>
                   <Stack space={1}>
                     <Text
@@ -291,7 +272,7 @@ function Main(): JSX.Element {
                         textAlign: 'center',
                         color: 'rgb(82, 87, 116)',
                       }}>
-                      Note: Your language is set to English.
+                      Note: Your language is set to {ISO639.getName(deviceLanguage)}.
                     </Text>
 
                     <Text
@@ -300,7 +281,7 @@ function Main(): JSX.Element {
                         textAlign: 'center',
                         color: 'rgb(82, 87, 116)',
                       }}>
-                      Note: Your target language is set to Spanish.
+                      Note: Your target language is set to {filters['target_language']}.
                     </Text>
                   </Stack>
                 </Stack>
